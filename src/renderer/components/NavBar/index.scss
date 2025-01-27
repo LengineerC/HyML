@@ -1,0 +1,81 @@
+@use "sass:math";
+@use "sass:color";
+@use "../../styles/global.scss" as *;
+
+.nav-main{
+    $navMainHeight:math.div($headerHeight,1.1);
+    // position: absolute;
+    width: 100%;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: flex-end;
+    height: $navMainHeight;
+    background-color: color.mix($themeColor,#ffffff,40%);
+    // -webkit-user-select: none;
+    // transition: 0.3s;
+    // transform: translateY(-$navMainHeight);
+    // opacity: 0;
+
+    // &.fade-in{
+    //     opacity: 1;
+    //     transform: translateY(0);
+    // }
+    .nav-tab{
+        @extend %flex-hv-center;
+        width: 75px;
+        font-size: 13px;
+        height: 85%;
+        line-height: 30px;
+        font-weight: bold;
+        color: $textColor1;
+        border-top-left-radius: 7px;
+        border-top-right-radius: 7px;
+        position: relative;
+        color: #ffffff;
+        text-shadow: 0 0 3px #00000033;
+        box-sizing: border-box;
+        padding-bottom: 3px;
+        transition: 0.2s;
+
+        &:hover{
+            background-color: #ffffff44;
+        }
+
+        &:active{
+            background-color: #ffffff66;
+        }
+        
+        &.active{
+            $bgColor:#fcfcfc;
+            background: $bgColor;
+            color: $themeColor;
+            text-shadow: 0 0 3px #ffffff33;
+
+            &::before{
+                content: "";
+                position: absolute;
+                width: 7px;
+                height: 7px;
+                left: -7px;
+                bottom: 0;
+                background: radial-gradient(circle at 0% 0%,transparent 7px,$bgColor 0);
+            }
+
+            &::after{
+                content: "";
+                position: absolute;
+                width: 7px;
+                height: 7px;
+                right: -7px;
+                bottom: 0;
+                background: radial-gradient(circle at 100% 0%,transparent 7px,$bgColor 0);
+            }
+        }
+
+        .icon{
+            font-size: 16px;
+            margin-right: 5px;
+        }
+    }
+
+}

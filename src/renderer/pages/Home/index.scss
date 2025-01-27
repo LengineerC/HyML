@@ -1,0 +1,13 @@
+@use "../../styles/global.scss" as *;
+
+.home-main {
+    @extend %flex-hv-center;
+    justify-content: space-evenly;
+    height: 100%;
+    width: 100%;
+
+    .account-container {
+        height: 70vh;
+        width: 30vw;
+    }
+}

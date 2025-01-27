@@ -1,0 +1,60 @@
+@use "sass:color";
+@use "../../styles/global.scss" as *;
+
+.header-main {
+    z-index: 1000;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+    height: $headerHeight;
+    background: linear-gradient(to right,
+        color.mix($themeColor, #000000aa, 80%),
+        color.mix($themeColor, #ffffffaa, 80%),
+        color.mix($themeColor, #000000aa, 80%),
+    );
+    -webkit-app-region: drag;
+    // -webkit-user-select: none;
+
+    .logo{
+        height: 100%;
+    }
+
+    .center{
+        height: 100%;
+    }
+
+    .btns-container{
+        @extend %flex-hv-center;
+        justify-content: space-between;
+        height: $headerHeight;
+        width: 60px;
+        padding: 0px 12px;
+        // -webkit-user-select: auto;
+        -webkit-app-region:no-drag;
+
+        .btn{
+            height: auto;
+            width: auto;
+            border-radius: 30%;
+            padding: 5px;
+            // background-color: #000;
+            @extend %flex-hv-center;
+            transition: 0.2s;
+
+            &:hover{
+                background-color: #ffffff44;
+            }
+            &:active{
+                background-color: #ffffff66;
+                transform: scale(0.9);
+            }
+
+            .icon{
+                font-size: 16px;
+                color: #fff;
+            }
+        }
+    }
+}
