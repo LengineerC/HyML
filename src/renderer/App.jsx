@@ -1,30 +1,30 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Header from './components/Header/index';
 import { useRoutes } from 'react-router-dom';
 import routes from './route/index';
 
 import "./App.scss";
-import { ConfigProvider } from 'antd';
 
 export default function App() {
   const elements=useRoutes(routes);
+
+  useEffect(()=>{
+    window.mainApi.onMainProcessReady(()=>{
+      window.fileApi.getOnlineUsers(value=>{
+        console.log("render App:",value);
+        
+      });
+    });
+
+  },[])
 
   return (
     <div className='app'>
       <Header />
 
-      <ConfigProvider
-        theme={{
-          token:{
-            colorPrimary:"#409EFF",
-            colorPrimaryActive:"#2786e6"
-          }
-        }}
-      >
-        <div className='body'>
-          {elements}
-        </div>
-      </ConfigProvider>
+      <div className='body'>
+        {elements}
+      </div>
     </div>
   )
 }

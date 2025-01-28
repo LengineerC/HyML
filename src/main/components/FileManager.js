@@ -46,7 +46,7 @@ class FileManager{
   }
 
   /**
-   * 异步写入JSON文件
+   * 同步写入JSON文件
    * @param {string} filePath 
    * @param {Object} data 
    * @param {(code:number)=>void} callback
@@ -57,16 +57,15 @@ class FileManager{
       this.mkDirSync(dirPath);
     }
 
-    const jsonString=JSON.stringify(data);
-    fs.writeFile(filePath,jsonString,err=>{
-      if(err){
-        console.error(`Error writing file: ${filePath}`,err);
-        
-        if(typeof callback==="function") callback(STATUS_CODE.ERROR);
-      }else{
-        if(typeof callback==="function") callback(STATUS_CODE.SUCCESS);
-      }
-    });
+    try{
+      const jsonString=JSON.stringify(data);
+      fs.writeFileSync(filePath,jsonString);;
+      if(typeof callback==="function") callback(STATUS_CODE.SUCCESS);
+    }catch(err){
+      console.error(`Error writing file: ${filePath}`,err);
+      
+      if(typeof callback==="function") callback(STATUS_CODE.ERROR);
+    }
   }
 
 }

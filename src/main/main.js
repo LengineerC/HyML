@@ -1,6 +1,7 @@
 const path=require('path');
 const { app, BrowserWindow, ipcMain } = require('electron');
 const logger=require("./log4js/logger");
+const ConfigManager = require('./components/ConfigManager');
 // const MCManager = require('./components/MCManager');
 
 /**
@@ -41,8 +42,12 @@ const createWindow = () => {
   }
 
   mainWindow=win;
+  mainWindow.webContents.once("dom-ready",()=>{
+    mainWindow.webContents.send("main-process-ready");
+  });
   logger.info("MainWindow created");
 }
+
 
 const startListenWindowApi=()=>{
   ipcMain.on('minimize',()=>{
@@ -54,9 +59,19 @@ const startListenWindowApi=()=>{
   });
 }
 
+
+const readOnlineUsersConfig=()=>{
+  const onlineUsers=ConfigManager.readOnlineUsers();
+
+  mainWindow.webContents.send("read-online-users-finished",onlineUsers);
+}
+
 app.whenReady().then(async() => {
   createWindow();
+  // Start listeners
   startListenWindowApi();
+
+  ipcMain.on("read-online-users",readOnlineUsersConfig);
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {

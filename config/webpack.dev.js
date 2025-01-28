@@ -14,7 +14,7 @@ module.exports = merge(baseConfig, {
     static: path.resolve(__dirname, '../src/renderer'),
     hot: true,
     port: 8000,
-    open: true,
+    open: false,
     historyApiFallback: true,
   },
   plugins: [

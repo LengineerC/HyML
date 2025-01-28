@@ -7,7 +7,8 @@
     // position: absolute;
     width: 100%;
     display: flex;
-    justify-content: space-evenly;
+    // justify-content: space-evenly;
+    justify-content: center;
     align-items: flex-end;
     height: $navMainHeight;
     background-color: color.mix($themeColor,#ffffff,40%);
@@ -36,6 +37,8 @@
         box-sizing: border-box;
         padding-bottom: 3px;
         transition: 0.2s;
+
+        margin: 0 10px;
 
         &:hover{
             background-color: #ffffff44;
