@@ -1,8 +1,15 @@
 const path=require('path');
 const { app, BrowserWindow, ipcMain } = require('electron');
+const {
+  MAIN_API_EVENTS,
+  WINDOW_API_EVENTS,
+  FILE_API_EVENTS,
+  ACCOUNT_API_EVENTS,
+}=require("./ipcEvents");
 const logger=require("./log4js/logger");
 const ConfigManager = require('./components/ConfigManager');
-// const MCManager = require('./components/MCManager');
+const MCManager = require('./components/MCManager');
+const { STATUS_CODE } = require('./utils/enum');
 
 /**
  * @type {BrowserWindow | null}
@@ -43,35 +50,66 @@ const createWindow = () => {
 
   mainWindow=win;
   mainWindow.webContents.once("dom-ready",()=>{
-    mainWindow.webContents.send("main-process-ready");
+    mainWindow.webContents.send(MAIN_API_EVENTS.MAIN_PROCESS_READY);
   });
   logger.info("MainWindow created");
 }
 
+const readBaseConfig=()=>{
+  const baseConfig=ConfigManager.readBaseConfig();
 
-const startListenWindowApi=()=>{
-  ipcMain.on('minimize',()=>{
-    mainWindow.minimize();
-  });
-
-  ipcMain.on("close",()=>{
-    mainWindow.close();
-  });
+  mainWindow.webContents.send(FILE_API_EVENTS.READ_BASE_CONFIG_FINISHED,baseConfig);
 }
-
 
 const readOnlineUsersConfig=()=>{
   const onlineUsers=ConfigManager.readOnlineUsers();
 
-  mainWindow.webContents.send("read-online-users-finished",onlineUsers);
+  mainWindow.webContents.send(FILE_API_EVENTS.READ_ONLINE_USERS_FINISHED,onlineUsers);
+}
+const readOfflineUsersConfig=()=>{
+  const offlineUsers=ConfigManager.readOfflineUsers();
+
+  mainWindow.webContents.send(FILE_API_EVENTS.READ_OFFLINE_USERS_FINISHED,offlineUsers);
 }
 
-app.whenReady().then(async() => {
-  createWindow();
-  // Start listeners
-  startListenWindowApi();
+const handleLogin=async()=>{
+  logger.info("Start to login");
+  const user=await MCManager.getOnlineMcAuth();
+  console.log(user);
+  
+  if(user){
+    let baseConfig=ConfigManager.readBaseConfig();
+    baseConfig.currentOnlineUser=user.uuid;
+    
+    ConfigManager.writeBaseConfig(baseConfig);
+    ConfigManager.editOnlineUsersConfig("add",user);
 
-  ipcMain.on("read-online-users",readOnlineUsersConfig);
+    mainWindow.webContents.send(ACCOUNT_API_EVENTS.LOGIN_FINISHED,STATUS_CODE.SUCCESS)
+  }else{
+    mainWindow.webContents.send(ACCOUNT_API_EVENTS.LOGIN_FINISHED,STATUS_CODE.ERROR);
+  }
+}
+
+
+app.whenReady().then(() => {
+  createWindow();
+
+  // Listen window event
+  ipcMain.on(WINDOW_API_EVENTS.MINIMIZE,()=>{
+    mainWindow.minimize();
+  });
+
+  ipcMain.on(WINDOW_API_EVENTS.CLOSE,()=>{
+    mainWindow.close();
+  });
+
+  // Init and read configs
+  ipcMain.on(FILE_API_EVENTS.READ_BASE_CONFIG,readBaseConfig);
+  ipcMain.on(FILE_API_EVENTS.READ_ONLINE_USERS,readOnlineUsersConfig);
+  ipcMain.on(FILE_API_EVENTS.READ_OFFLINE_USERS,readOfflineUsersConfig);
+
+  // Listen account events
+  ipcMain.on(ACCOUNT_API_EVENTS.LOGIN,handleLogin);
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {

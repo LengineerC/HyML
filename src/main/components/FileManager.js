@@ -42,6 +42,8 @@ class FileManager{
       if(typeof callback==="function"){
         callback(STATUS_CODE.ERROR);
       }
+
+      throw err;
     });
   }
 
@@ -51,7 +53,7 @@ class FileManager{
    * @param {Object} data 
    * @param {(code:number)=>void} callback
    */
-  static writeJSON=(filePath,data,callback)=>{
+  static writeJSONSync=(filePath,data,callback)=>{
     const dirPath=path.dirname(filePath);
     if(!fs.existsSync(dirPath)){
       this.mkDirSync(dirPath);
@@ -65,9 +67,24 @@ class FileManager{
       console.error(`Error writing file: ${filePath}`,err);
       
       if(typeof callback==="function") callback(STATUS_CODE.ERROR);
+      throw err;
     }
   }
 
+  /**
+   * 同步读取JSON文件
+   * @param {string} filePath 
+   */
+  static readJSONSync=(filePath)=>{
+    try {
+      const jsonString=fs.readFileSync(filePath,{encoding:"utf8"});
+      return JSON.parse(jsonString);
+
+    } catch (err) {
+      console.error(`Failed to read JSON file: ${filePath}`,err);
+      throw err;
+    }
+  }
 }
 
 module.exports=FileManager;
