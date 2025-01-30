@@ -7,6 +7,7 @@ import {
   SAVE_BASE_CONFIG,
   SAVE_ONLINE_USERS,
   SAVE_OFFLINE_USERS,
+  SAVE_OS_INFO,
 } from "./redux/actions/constants";
 
 import "./App.scss";
@@ -16,7 +17,17 @@ export default function App() {
   const dispatch=useDispatch();
 
   useEffect(()=>{
-    window.mainApi.onMainProcessReady(()=>{
+    window.mainApi.onMainProcessReady(async()=>{
+      const totalMemory=await window.osApi.getTotalMemory();
+      // console.log("totalMemory",totalMemory);
+      dispatch({
+        type:SAVE_OS_INFO,
+        payload:{
+          totalMemory
+        }
+      });
+      
+
       window.fileApi.getBaseConfig(value=>{
         dispatch({
           type:SAVE_BASE_CONFIG,

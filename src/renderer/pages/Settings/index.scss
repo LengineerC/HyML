@@ -36,13 +36,34 @@
         margin: 10px 5px;
     }
 
+    $expandBgColor:#f6f6f6;
     .setting-item{
         display: flex;
         flex-direction: row;
         justify-content: space-between;
+        transition: 0.3s;
+        background-color: transparent;
         align-items: center;
-        padding: 0 15px;
+        padding: 0 20px;
         min-height: 50px;
+        border-radius: 5px;
+
+        &.expand{
+            flex-direction: column;
+        }
+        &.show{
+            background-color: $expandBgColor;
+        }
+
+        .show-main{
+            display: flex;
+            width: 100%;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            min-height: 50px;
+        }
 
         .setting-name{
             color: color.mix($textColor1,#ffffffaa,80%);
@@ -72,6 +93,57 @@
         .icon{
             color: $textColor1;
             margin: 0 3px;
+        }
+    }
+
+    .expand-icon{
+        color: $themeColor;
+        margin-left: 10px;
+        transition: 0.2s;
+
+        &:hover{
+            transform: scale(1.03);
+            color: color.mix($themeColor,#ffffff,90%);
+        }
+
+        &.on-expand{
+            transform: rotate(90deg);
+        }
+    }
+
+    .save-btn{
+        @extend %flex-hv-center;
+        padding: 6px 13px;
+        font-size: 14px;
+        background-color: transparent;
+        border-radius: 5px;
+        border: 1px solid $themeColor;
+        transition: 0.2s;
+        color: color.mix($themeColor,#000,80%);
+
+        &:hover{
+            background-color: color.mix($themeColor,#fff,30%);
+        }
+        &:active{
+            transform: scale(0.97);
+            background-color: color.mix($themeColor,#fff,40%);
+        }
+    }
+
+    .mem-expand-main{
+        // $borderRadius:5px;
+        @extend %flex-hv-center;
+        // background: linear-gradient(to bottom,#fff,#f6f6f6);
+        justify-content: center;
+        flex-direction: row;
+        width: 100%;
+        height: 0;
+        // border-bottom-left-radius: $borderRadius;
+        // border-bottom-right-radius: $borderRadius;
+        transition: 0.3s;
+
+        &.show{
+            height: 50px;
         }
     }
 }

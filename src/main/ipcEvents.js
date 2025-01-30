@@ -3,6 +3,10 @@ const MAIN_API_EVENTS={
 
 };
 
+const OS_API_EVENTS={
+  GET_TOTAL_MEMORY:"get-total-memory",
+};
+
 const WINDOW_API_EVENTS={
   MINIMIZE:"minimize",
   CLOSE:"close",
@@ -11,12 +15,15 @@ const WINDOW_API_EVENTS={
 const FILE_API_EVENTS={
   READ_BASE_CONFIG:"read-base-config",
   READ_BASE_CONFIG_FINISHED:"read-base-config-finished",
+  UPDATE_BASE_CONFIG:"update-base-config",
 
   READ_ONLINE_USERS:"read-online-users",
   READ_ONLINE_USERS_FINISHED:"read-online-users-finished",
-
+  
   READ_OFFLINE_USERS:"read-offline-users",
   READ_OFFLINE_USERS_FINISHED:"read-offline-users-finished",
+  
+  UPDATE_USERS_CONFIG:"update-online-user-config",
 
   CHOOSE_RESCOURCE:"choose-resource",
 
@@ -26,12 +33,13 @@ const FILE_API_EVENTS={
 const ACCOUNT_API_EVENTS={
   LOGIN:"login",
   LOGIN_FINISHED:"login-finished",
-  
+  LOGOUT:"logout",
 };
 
 
 module.exports={
   MAIN_API_EVENTS,
+  OS_API_EVENTS,
   WINDOW_API_EVENTS,
   FILE_API_EVENTS,
   ACCOUNT_API_EVENTS,

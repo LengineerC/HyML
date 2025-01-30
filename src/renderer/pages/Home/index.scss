@@ -63,46 +63,71 @@
             // font-family: "Lucida Console", Courier, monospace;
             padding: 5px;
 
-            .login-btn{
-                @extend %flex-hv-center;
-                color: #fff;
-                border-radius: 5px;
-                border: 1px solid $themeColor;
-                color: $themeColor;
-                font-weight: normal;
-                font-size: 12px;
-                width: 80px;
-                height: 20px;
-                // background-color: color.mix($themeColor, #000000, 95%);
-                background-color: transparent;
-                padding: 7px 0;
-                transition: 0.2s;
 
-                &:hover{
-                    background-color: color.mix($themeColor, #ffffff, 60%);
+            .switch-container{
+                @extend %flex-hv-center;
+                width: 100%;
+
+                .login-btn{
+                    @extend %flex-hv-center;
                     color: #fff;
+                    border-radius: 5px;
+                    border: 1px solid $themeColor;
+                    color: $themeColor;
+                    font-weight: normal;
+                    font-size: 12px;
+                    width: 80px;
+                    height: 20px;
+                    // background-color: color.mix($themeColor, #000000, 95%);
+                    background-color: transparent;
+                    padding: 7px 0;
+                    transition: 0.2s;
+    
+                    &:hover{
+                        background-color: color.mix($themeColor, #ffffff, 60%);
+                        color: #fff;
+                    }
+    
+                    &:active{
+                        background-color: color.mix($themeColor, #000000, 90%);
+                        transform: scale(0.97);
+                    }
+    
+    
+                }
+    
+                .login-btn-disabled{
+                    @extend %flex-hv-center;
+                    border-radius: 5px;
+                    font-weight: normal;
+                    font-size: 12px;
+                    width: 80px;
+                    height: 20px;
+                    padding: 7px 0;
+                    color: #fff;
+                    background-color: color.mix($themeColor, #ffffff, 80%);
+                    cursor: not-allowed;
                 }
 
-                &:active{
-                    background-color: color.mix($themeColor, #000000, 90%);
-                    transform: scale(0.97);
+                .add-btn{
+                    color: $themeColor;
+                    margin-left: 5px;
+
+                    &:hover{
+                        color: color.mix($themeColor,#ffffff,80%);
+                    }
+    
+                    &:active{
+                        color: color.mix($themeColor,#fff,60%);
+                    }
+
+                    &.disabled{
+                        color: #989b9d;
+                        cursor: not-allowed;
+                    }
                 }
-
-
             }
 
-            .login-btn-disabled{
-                @extend %flex-hv-center;
-                border-radius: 5px;
-                font-weight: normal;
-                font-size: 12px;
-                width: 80px;
-                height: 20px;
-                padding: 7px 0;
-                color: #fff;
-                background-color: color.mix($themeColor, #ffffff, 80%);
-                cursor: not-allowed;
-            }
         }
 
         .actions {

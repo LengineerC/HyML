@@ -5,6 +5,7 @@ const {
   WINDOW_API_EVENTS,
   FILE_API_EVENTS,
   ACCOUNT_API_EVENTS,
+  OS_API_EVENTS,
 }=require("./ipcEvents");
 
 contextBridge.exposeInMainWorld("mainApi",{
@@ -13,6 +14,12 @@ contextBridge.exposeInMainWorld("mainApi",{
       // console.log("main-process-ready");
       callback();
     });
+  }
+});
+
+contextBridge.exposeInMainWorld("osApi",{
+  getTotalMemory(){
+    return ipcRenderer.invoke(OS_API_EVENTS.GET_TOTAL_MEMORY);
   }
 });
 
@@ -34,6 +41,10 @@ contextBridge.exposeInMainWorld("fileApi",{
     });
   },
 
+  updateBaseConfig(baseConfig){
+    return ipcRenderer.invoke(FILE_API_EVENTS.UPDATE_BASE_CONFIG,baseConfig);
+  },
+
   getOnlineUsers(callback){
     ipcRenderer.send(FILE_API_EVENTS.READ_ONLINE_USERS);
     
@@ -42,6 +53,17 @@ contextBridge.exposeInMainWorld("fileApi",{
       
       callback(value);
     });
+  },
+
+  /**
+   * @param {Object} action
+   * @param {"online"|"offline"} action.userType 
+   * @param {"add"|"delete"|"update"|"clear"} action.operation
+   * @param {any} [action.param] - 用户对象或uuid
+   * @returns {number} - 操作状态码
+   */
+  updateUsersConfig(action){
+    return ipcRenderer.invoke(FILE_API_EVENTS.UPDATE_USERS_CONFIG,action);
   },
 
   getOfflineUsers(callback){
@@ -74,6 +96,10 @@ contextBridge.exposeInMainWorld("accountApi",{
     ipcRenderer.once(ACCOUNT_API_EVENTS.LOGIN_FINISHED,(_,value)=>{
       callback(value);
     });
+  },
+
+  logout(user){
+    ipcRenderer.invoke(ACCOUNT_API_EVENTS.LOGOUT,user);
   },
 
 });

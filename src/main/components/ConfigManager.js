@@ -19,6 +19,7 @@ class ConfigManager{
       savePath:null,
       currentOnlineUser:null,
       currentOfflineUser:null,
+      maxMem:4,
     }
 
     if(!fs.existsSync(this.baseConfigPath)){
@@ -46,6 +47,7 @@ class ConfigManager{
 
     }catch(err){
       logger.error("Failed to write base.json", err.message);
+      throw err;
     }
   }
 
@@ -134,6 +136,7 @@ class ConfigManager{
   
       }catch(err){
         logger.error("Failed to edit online_users.json",err.message);
+        throw err;
       }
 
     }else if(userType==="offline"){
@@ -172,6 +175,7 @@ class ConfigManager{
   
       }catch(err){
         logger.error("Failed to edit offline_users.json",err.message);
+        throw err;
       }
 
     }
