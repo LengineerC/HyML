@@ -4,9 +4,6 @@ const {app}=require('electron');
 const FileManager=require("./FileManager");
 const logger = require('../log4js/logger');
 
-/**
- * 暂时写为分开的重复代码后续可能加入对应的特殊处理
- */
 class ConfigManager{
   static basePath=path.resolve(app.getPath("userData"),"config");
   static baseConfigPath=path.resolve(this.basePath,"base.json");
@@ -19,6 +16,7 @@ class ConfigManager{
    */
   static readBaseConfig=()=>{
     let baseConfig={
+      savePath:null,
       currentOnlineUser:null,
       currentOfflineUser:null,
     }
@@ -52,135 +50,130 @@ class ConfigManager{
   }
 
   /**
-   * 同步读取正版用户账号配置
+   * 同步读取账号列表
+   * @param {"online" | "offline"} userType 
    * @returns {any[]}
    */
-  static readOnlineUsers=()=>{
-    let onlineUsers=[];
+  static readUsers=userType=>{
+    let users=[];
 
-    if(!fs.existsSync(this.onlineUserConfigPath)){
-      FileManager.writeJSONSync(this.onlineUserConfigPath,[]);
-      return onlineUsers;
-    }
+    if(userType==="online"){
+      if(!fs.existsSync(this.onlineUserConfigPath)){
+        FileManager.writeJSONSync(this.onlineUserConfigPath,[]);
+        return users;
+      }
+  
+      try{
+        
+        users=JSON.parse(fs.readFileSync(this.onlineUserConfigPath,{encoding:"utf8"}));
+  
+        return users;
+      }catch(err){
+        logger.error("Read online users config error:",err.message);
+        return users;
+      }
 
-    try{
-      
-      onlineUsers=JSON.parse(fs.readFileSync(this.onlineUserConfigPath,{encoding:"utf8"}));
+    }else{
+      if(!fs.existsSync(this.offlineUserConfigPath)){
+        FileManager.writeJSONSync(this.offlineUserConfigPath,[]);
+        return users;
+      }
+  
+      try{
+        users=JSON.parse(fs.readFileSync(this.offlineUserConfigPath,{encoding:"utf8"}));
+  
+        return users;
+      }catch(err){
+        logger.error("Read offline users config error:",err.message);
+        return users;
+      }
 
-      return onlineUsers;
-    }catch(err){
-      console.log("Read online users config error:",err);
-      return onlineUsers;
     }
   }
 
   /**
-   * 同步修改online_user.json
+   * 
+   * @param {"online" | "offline"} userType 
    * @param {"add" | "delete" | "update" | "clear"} operation 
    * @param {Object} user 
    */
-  static editOnlineUsersConfig=(operation,user)=>{
-    let currentOnlineUsers=this.readOnlineUsers();
+  static editUsersConfig=(userType,operation,user)=>{
+    if(userType==="online"){
+      let currentOnlineUsers=this.readUsers("online");
 
-    try{
-      switch(operation){
-        case "add":{
-          currentOnlineUsers.push(user);
-          FileManager.writeJSONSync(this.onlineUserConfigPath,currentOnlineUsers);
-          
-          break;
+      try{
+        switch(operation){
+          case "add":{
+            currentOnlineUsers.push(user);
+            FileManager.writeJSONSync(this.onlineUserConfigPath,currentOnlineUsers);
+            
+            break;
+          }
+    
+          case "delete":{
+            const newOnlineUsers=currentOnlineUsers.filter(onlineUser=>user.uuid!==onlineUser.uuid);
+            FileManager.writeJSONSync(this.onlineUserConfigPath,newOnlineUsers);
+    
+            break;
+          }
+    
+          case "update":{
+            const index=currentOnlineUsers.findIndex(onlineUser=>onlineUser.uuid===user.uuid);
+            currentOnlineUsers[index]=user;
+            FileManager.writeJSONSync(this.onlineUserConfigPath,currentOnlineUsers);
+    
+            break;
+          }
+    
+          case "clear":{
+            FileManager.writeJSONSync(this.onlineUserConfigPath,[]);
+  
+            break;
+          }
         }
   
-        case "delete":{
-          const newOnlineUsers=currentOnlineUsers.filter(onlineUser=>user.uuid!==onlineUser.uuid);
-          FileManager.writeJSONSync(this.onlineUserConfigPath,newOnlineUsers);
-  
-          break;
-        }
-  
-        case "update":{
-          const index=currentOnlineUsers.findIndex(onlineUser=>onlineUser.uuid===user.uuid);
-          currentOnlineUsers[index]=user;
-          FileManager.writeJSONSync(this.onlineUserConfigPath,currentOnlineUsers);
-  
-          break;
-        }
-  
-        case "clear":{
-          FileManager.writeJSONSync(this.onlineUserConfigPath,[]);
-
-          break;
-        }
+      }catch(err){
+        logger.error("Failed to edit online_users.json",err.message);
       }
 
-    }catch(err){
-      logger.error("Failed to edit online_users.json",err.message);
-    }
-  }
+    }else if(userType==="offline"){
+      let currentOfflineUsers=this.readUsers("offline");
 
-  /**
-   * 同步读取离线用户账号配置
-   * @returns {any[]}
-   */
-  static readOfflineUsers=()=>{
-    let offlineUsers=[];
-
-    if(!fs.existsSync(this.offlineUserConfigPath)){
-      FileManager.writeJSONSync(this.offlineUserConfigPath,[]);
-      return offlineUsers;
-    }
-
-    try{
-      offlineUsers=JSON.parse(fs.readFileSync(this.offlineUserConfigPath,{encoding:"utf8"}));
-
-      return offlineUsers;
-    }catch(err){
-      console.log("Read offline users config error:",err);
-      return offlineUsers;
-    }
-  }
-
-  /**
-   * 同步修改offline_users.json
-   * @param {"add" | "delete" | "update" | "clear"} operation 
-   * @param {Object} user 
-   */
-  static editOfflineUsersConfig=(operation,user)=>{
-    let currentOfflineUsers=this.readOfflineUsers();
-
-    try{
-      switch(operation){
-        case "add":{
-          currentOfflineUsers.push(user);
-          FileManager.writeJSONSync(this.offlineUserConfigPath,currentOfflineUsers);
-          
-          break;
+      try{
+        switch(operation){
+          case "add":{
+            currentOfflineUsers.push(user);
+            FileManager.writeJSONSync(this.offlineUserConfigPath,currentOfflineUsers);
+            
+            break;
+          }
+    
+          case "delete":{
+            const newOfflineUsers=currentOfflineUsers.filter(offlineUser=>user.uuid!==offlineUser.uuid);
+            FileManager.writeJSONSync(this.offlineUserConfigPath,newOfflineUsers);
+    
+            break;
+          }
+    
+          case "update":{
+            const index=currentOfflineUsers.findIndex(offlineUser=>offlineUser.uuid===user.uuid);
+            currentOfflineUsers[index]=user;
+            FileManager.writeJSONSync(this.offlineUserConfigPath,currentOfflineUsers);
+    
+            break;
+          }
+    
+          case "clear":{
+            FileManager.writeJSONSync(this.offlineUserConfigPath,[]);
+            
+            break;
+          }
         }
   
-        case "delete":{
-          const newOfflineUsers=currentOfflineUsers.filter(offlineUser=>user.uuid!==offlineUser.uuid);
-          FileManager.writeJSONSync(this.offlineUserConfigPath,newOfflineUsers);
-  
-          break;
-        }
-  
-        case "update":{
-          const index=currentOfflineUsers.findIndex(offlineUser=>offlineUser.uuid===user.uuid);
-          currentOfflineUsers[index]=user;
-          FileManager.writeJSONSync(this.offlineUserConfigPath,currentOfflineUsers);
-  
-          break;
-        }
-  
-        case "clear":{
-          FileManager.writeJSONSync(this.offlineUserConfigPath,[]);
-          
-          break;
-        }
+      }catch(err){
+        logger.error("Failed to edit offline_users.json",err.message);
       }
 
-    }catch(err){
-      logger.error("Failed to edit offline_users.json",err.message);
     }
   }
 

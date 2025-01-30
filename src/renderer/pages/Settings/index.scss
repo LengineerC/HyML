@@ -1,0 +1,77 @@
+@use "sass:color";
+@use "../../styles/global.scss" as *;
+
+.settings-main{
+    @extend %flex-hv-center;
+    justify-content: start;
+    flex-direction: column;
+    height: 100%;
+    max-height: 100%;
+    padding: 8px;
+    width: 100%;
+    overflow-y: scroll;
+    box-sizing: border-box;
+
+    &::-webkit-scrollbar {
+        width: 5px;
+    }
+    &::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    &::-webkit-scrollbar-thumb {
+        background: linear-gradient(#686894, #46466c);
+        border-radius: 50px;
+    }
+    &::-webkit-scrollbar-thumb:active {
+        background: linear-gradient(#7c7ca5, #61618f);
+    }
+
+    .dashed-hr{
+        $color:#66666655;
+        height: 1px;
+        width: auto;
+        background-image: linear-gradient(to right, $color 0%, $color 60%, transparent 50%);
+        background-size: 10px 100%;
+        background-repeat: repeat-x;
+        margin: 10px 5px;
+    }
+
+    .setting-item{
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 15px;
+        min-height: 50px;
+
+        .setting-name{
+            color: color.mix($textColor1,#ffffffaa,80%);
+            font-size: 14px;
+        }
+
+        .icon-btn{
+            transition: 0.2s;
+            color: color.mix($themeColor,#000000aa,80%);
+            margin: 0 0 0 8px;
+            font-size: 19px;
+
+            &:hover{
+                color: color.mix($themeColor,#ffffffaa,80%);
+            }
+        }
+    }
+
+    .part-title{
+        width: 100%;
+        height: auto;
+        color: $textColor1;
+        font-size: 18px;
+        padding: 8px;
+        font-weight: bold;
+
+        .icon{
+            color: $textColor1;
+            margin: 0 3px;
+        }
+    }
+}

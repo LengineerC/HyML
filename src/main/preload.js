@@ -54,6 +54,17 @@ contextBridge.exposeInMainWorld("fileApi",{
     });
   },
   
+  /**
+   * @param {"file" | "dir"} type 
+   */
+  chooseResource(type){
+
+    return ipcRenderer.invoke(FILE_API_EVENTS.CHOOSE_RESCOURCE,type);
+  },
+
+  openResourceDialog(path){
+    ipcRenderer.send(FILE_API_EVENTS.OPEN_RESOURCE_DIALOG,path);
+  }
 });
 
 contextBridge.exposeInMainWorld("accountApi",{

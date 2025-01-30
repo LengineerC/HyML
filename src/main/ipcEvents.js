@@ -17,6 +17,10 @@ const FILE_API_EVENTS={
 
   READ_OFFLINE_USERS:"read-offline-users",
   READ_OFFLINE_USERS_FINISHED:"read-offline-users-finished",
+
+  CHOOSE_RESCOURCE:"choose-resource",
+
+  OPEN_RESOURCE_DIALOG:"open-resource-dialog",
 };
 
 const ACCOUNT_API_EVENTS={

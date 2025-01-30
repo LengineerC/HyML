@@ -21,11 +21,21 @@
     //     opacity: 1;
     //     transform: translateY(0);
     // }
+    a{
+        display: flex;
+        align-items: flex-end;
+        height: 85%;
+        width: auto;
+        text-decoration: none;
+        margin: 0 10px;
+        margin-top: 10px;
+    }
+
     .nav-tab{
         @extend %flex-hv-center;
         width: 75px;
         font-size: 13px;
-        height: 85%;
+        height: 100%;
         line-height: 30px;
         font-weight: bold;
         color: $textColor1;
@@ -38,7 +48,7 @@
         padding-bottom: 3px;
         transition: 0.2s;
 
-        margin: 0 10px;
+        // margin: 0 10px;
 
         &:hover{
             background-color: #ffffff44;

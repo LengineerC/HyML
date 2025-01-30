@@ -1,7 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Card from '../../components/Card';
 import { Switch, ConfigProvider, Popover, Spin, message } from 'antd';
-import { LoadingOutlined, PoweroffOutlined } from '@ant-design/icons';
+import { 
+  LoadingOutlined, 
+  PoweroffOutlined,
+  UserSwitchOutlined,
+} from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { STATUS_CODE } from '../../../main/utils/enum';
 import {
@@ -20,10 +24,6 @@ export default function Home() {
   const [loginMode, setLoginMode] = useState(true);
   const [canLoginBtnClick,setCanLoginBtnClick]=useState(true);
 
-  useEffect(()=>{
-    console.log(onlineUsers);
-    
-  },[onlineUsers]);
 
   const loginError=()=>{
     messageApi.error("登录失败");
@@ -55,6 +55,30 @@ export default function Home() {
       >
         <PoweroffOutlined
           className='icon'
+        />
+      </Popover>
+    ),
+    switchUser:(
+      <Popover
+        key="switch-user"
+        overlayInnerStyle={{
+          padding: "3px"
+        }}
+        content={
+          <div
+            style={{
+              padding: "3px",
+              fontSize: "12px",
+              color: "#1f1e33"
+            }}
+          >
+            切换账号
+          </div>
+        }
+        placement="bottom"
+      >
+        <UserSwitchOutlined 
+         className='icon'
         />
       </Popover>
     ),
@@ -104,6 +128,7 @@ export default function Home() {
 
     let opBtns=[];
     if(currentOnlineUser){
+      opBtns.push(operationBtns.switchUser);
       opBtns.push(operationBtns.logOut);
     }
 

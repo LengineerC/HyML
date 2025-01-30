@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { HomeOutlined, SettingOutlined } from '@ant-design/icons';
 
 import "./index.scss";
+import { NavLink } from 'react-router-dom';
 
 const tabs=[
   {
@@ -12,7 +13,7 @@ const tabs=[
   {
     label:"设置",
     icon:<SettingOutlined className='icon'/>,
-    path:"/"
+    path:"/settings"
   },
 ];
 
@@ -22,14 +23,15 @@ export default function NavBar() {
   const createTabs=()=>tabs.map((tab,index)=>{
 
     return (
-      <div 
-      onClick={()=>setTabIndex(index)}
-      key={index}
-      className={`nav-tab ${tabIndex===index&&"active"}`}
-      >
-        {tab.icon}
-        {tab.label}
-      </div>
+      <NavLink key={index} to={tab.path}>
+        <div 
+        onClick={()=>setTabIndex(index)}
+        className={`nav-tab ${tabIndex===index&&"active"}`}
+        >
+          {tab.icon}
+          {tab.label}
+        </div>
+      </NavLink>
     );
   });
 

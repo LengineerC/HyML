@@ -67,17 +67,20 @@
                 @extend %flex-hv-center;
                 color: #fff;
                 border-radius: 5px;
+                border: 1px solid $themeColor;
+                color: $themeColor;
                 font-weight: normal;
                 font-size: 12px;
                 width: 80px;
                 height: 20px;
-                background-color: color.mix($themeColor, #000000, 95%);
+                // background-color: color.mix($themeColor, #000000, 95%);
+                background-color: transparent;
                 padding: 7px 0;
                 transition: 0.2s;
 
                 &:hover{
-                    background-color: color.mix($themeColor, #ffffff, 95%);
-                    transform: scale(1.03);
+                    background-color: color.mix($themeColor, #ffffff, 60%);
+                    color: #fff;
                 }
 
                 &:active{

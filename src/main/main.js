@@ -1,5 +1,5 @@
 const path=require('path');
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog, shell } = require('electron');
 const {
   MAIN_API_EVENTS,
   WINDOW_API_EVENTS,
@@ -43,7 +43,7 @@ const createWindow = () => {
     // avoid production mode open devTool
     win.webContents.on('before-input-event', (event, input) => {
       if (input.key === 'F12' || (input.control && input.shift && input.key === 'I')) {
-        event.preventDefault()
+        event.preventDefault();
       }
     });
   }
@@ -62,12 +62,12 @@ const readBaseConfig=()=>{
 }
 
 const readOnlineUsersConfig=()=>{
-  const onlineUsers=ConfigManager.readOnlineUsers();
+  const onlineUsers=ConfigManager.readUsers("online");
 
   mainWindow.webContents.send(FILE_API_EVENTS.READ_ONLINE_USERS_FINISHED,onlineUsers);
 }
 const readOfflineUsersConfig=()=>{
-  const offlineUsers=ConfigManager.readOfflineUsers();
+  const offlineUsers=ConfigManager.readUsers("offline");
 
   mainWindow.webContents.send(FILE_API_EVENTS.READ_OFFLINE_USERS_FINISHED,offlineUsers);
 }
@@ -75,14 +75,14 @@ const readOfflineUsersConfig=()=>{
 const handleLogin=async()=>{
   logger.info("Start to login");
   const user=await MCManager.getOnlineMcAuth();
-  console.log(user);
+  // console.log(user);
   
   if(user){
     let baseConfig=ConfigManager.readBaseConfig();
     baseConfig.currentOnlineUser=user.uuid;
     
     ConfigManager.writeBaseConfig(baseConfig);
-    ConfigManager.editOnlineUsersConfig("add",user);
+    ConfigManager.editUsersConfig("online","add",user);
 
     mainWindow.webContents.send(ACCOUNT_API_EVENTS.LOGIN_FINISHED,STATUS_CODE.SUCCESS)
   }else{
@@ -90,6 +90,38 @@ const handleLogin=async()=>{
   }
 }
 
+/**
+ * @param {"file" | "dir"} type 
+ */
+const handleChooseResouce=async(type)=>{
+  const resourceType=type==="file"?"openFile":"openDirectory";
+  console.log("handleChooseResouce",resourceType);
+  
+  const resourcePath=await dialog.showOpenDialog(mainWindow,{
+    properties:[resourceType]
+  }).then(result=>{
+    if(!result.canceled){
+      savePath=result.filePaths[0];
+
+      let baseConfig=ConfigManager.readBaseConfig();
+      ConfigManager.writeBaseConfig({
+        ...baseConfig,
+        savePath
+      });
+
+      return savePath;
+    }
+    
+  }).catch(err=>{
+    console.error("Choose resource error:",err);
+  });
+
+  return resourcePath;
+}
+
+const handleOpenResource=path=>{
+  shell.openPath(path);
+}
 
 app.whenReady().then(() => {
   createWindow();
@@ -108,6 +140,9 @@ app.whenReady().then(() => {
   ipcMain.on(FILE_API_EVENTS.READ_ONLINE_USERS,readOnlineUsersConfig);
   ipcMain.on(FILE_API_EVENTS.READ_OFFLINE_USERS,readOfflineUsersConfig);
 
+  ipcMain.handle(FILE_API_EVENTS.CHOOSE_RESCOURCE,(_,type)=>handleChooseResouce(type));
+  ipcMain.on(FILE_API_EVENTS.OPEN_RESOURCE_DIALOG,(_,path)=>handleOpenResource(path));
+  
   // Listen account events
   ipcMain.on(ACCOUNT_API_EVENTS.LOGIN,handleLogin);
 
