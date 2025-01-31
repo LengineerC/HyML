@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Card from '../../components/Card';
 import { Switch, ConfigProvider, Popover, Spin, message, Select } from 'antd';
 import { 
+  CloseOutlined,
   LoadingOutlined, 
   PlusOutlined, 
   PoweroffOutlined,
@@ -15,9 +16,11 @@ import {
   SAVE_ONLINE_USERS,
 } from "../../redux/actions/constants";
 import { getMinecraftVersions } from '../../services/minecraftService';
+// import mcVersionsJson from './mcversions';
 
 import "./index.scss";
 
+import mincraftIcon from "../../assets/images/minecraft.svg";
 
 export default function Home() {
   const dispatch=useDispatch();
@@ -26,28 +29,30 @@ export default function Home() {
 
   const [loginMode, setLoginMode] = useState(true);
   const [canLoginBtnClick,setCanLoginBtnClick]=useState(true);
-
-  // useEffect(()=>{
-  //   getMinecraftVersions().then(mcVersions=>{
-  //     // console.log(mcVersions);
-      
-  //     dispatch({
-  //       type:SAVE_MC_VERSIONS,
-  //       payload:mcVersions,
-  //     });
-
-  //   }).catch(err=>{
-  //     console.error(err);
-      
-  //     messageApi.error("获取正式版本列表失败");
-  //   });
-
-  // },[]);
+  const [showVersionSelector,setShowVersionSelector]=useState(false);
 
   useEffect(()=>{
-    console.log("baseConfig",baseConfig);
+    getMinecraftVersions().then(mcVersions=>{
+      // console.log(mcVersions.length);
+      
+      dispatch({
+        type:SAVE_MC_VERSIONS,
+        payload:mcVersions,
+      });
+
+    }).catch(err=>{
+      console.error(err);
+      
+      messageApi.error("获取正式版本列表失败");
+    });
+
+
+  },[]);
+
+  // useEffect(()=>{
+  //   console.log("baseConfig",baseConfig);
     
-  },[baseConfig])
+  // },[baseConfig])
 
 
   const loginError=()=>{
@@ -359,6 +364,45 @@ export default function Home() {
     );
   }
 
+  const handleSelectedVersion=version=>{
+    setShowVersionSelector(false);
+    console.log(version);
+  }
+
+  const createVersions=()=>{
+    if(mcVersions&&mcVersions.length>0){
+      // console.log("mcVersions",mcVersions);
+
+      return mcVersions.map((version,index)=>{
+        const date=new Date(version.dateModified);
+        const dateString=date.toISOString().substring(0,10);
+  
+        return(
+          <div 
+          className='version' 
+          key={index}
+          onClick={()=>handleSelectedVersion(version)}
+          >
+            <div className='col-1'>
+              <div className='icon'>
+                <img src={mincraftIcon} alt="" />
+              </div>
+  
+              <div className='version-label'>
+                {version.versionString}
+              </div>
+            </div>
+  
+            <div className='time-container'>
+              {dateString}
+            </div>
+          </div>
+        );
+      });
+    }
+
+  }
+
   return (
     <ConfigProvider
       theme={{
@@ -371,6 +415,31 @@ export default function Home() {
     >
       {contextHolder}
       <div className='home-main'>
+        <div className={`version-selector-container ${!showVersionSelector && "fade-out"}`}>
+          <div className="version-selector-main">
+            <div className='header'>
+              {/* <div className='icon'>
+                <img src={mincraftIcon} alt="" />
+              </div> */}
+
+              <div className='title'>
+                选择版本
+              </div>
+
+              <CloseOutlined 
+                className='close-btn'
+                onClick={()=>setShowVersionSelector(false)}
+              />
+            </div>
+
+            <hr />
+
+            <div className='version-body'>
+              {createVersions()}
+            </div>
+          </div>
+        </div>
+
         <div className='row-1'>
           <Card>
             <div className='account-container'>
@@ -396,7 +465,30 @@ export default function Home() {
 
           <Card>
             <div className='version-container'>
+              <div className='row'>
+                <div 
+                className='btn'
+                onClick={()=>setShowVersionSelector(true)}
+                >
+                  版本选择
+                </div>
 
+                <div className='btn'>
+                  版本设置
+                </div>
+              </div>
+
+              <div className='row'>
+                <div className='btn-start'>
+                  <div className='label'>
+                    启动游戏
+                  </div>
+
+                  <div className='info'>
+                    1.20.4
+                  </div>
+                </div>
+              </div>
             </div>
           </Card>
         </div>

@@ -10,7 +10,8 @@ export const getMinecraftVersions=async ()=>{
   const versionList=response.map(item=>({
     id:item.id,
     gameVersionId:item.gameVersionId,
-    version:item.versionString,
+    versionString:item.versionString,
+    dateModified:item.dateModified,
   }));
 
   return versionList;

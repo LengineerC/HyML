@@ -19,11 +19,11 @@
         background: transparent;
     }
     &::-webkit-scrollbar-thumb {
-        background: linear-gradient(#686894, #46466c);
+        background: #eee;
         border-radius: 50px;
     }
     &::-webkit-scrollbar-thumb:active {
-        background: linear-gradient(#7c7ca5, #61618f);
+        background: #ddd;
     }
 
     .dashed-hr{

@@ -48,6 +48,10 @@ module.exports = {
           },
         ],
       },
+      {
+        test: /\.(svg|png|webp|jpg|jpeg)$/,
+        type: 'asset/resource'
+      },
     ],
   },
   plugins: [

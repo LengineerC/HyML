@@ -106,6 +106,7 @@ export default function Settings() {
           >
             <Input 
               value={currentBaseConfig?.savePath ?? ""} 
+              placeholder='请选择游戏保存路径'
               disabled
             />
 
