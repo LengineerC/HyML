@@ -38,6 +38,8 @@ const createWindow = () => {
     win.loadURL("http://localhost:8000/#/");
     win.webContents.openDevTools();
   }else{
+    win.webContents.openDevTools();
+
     const indexPath=path.join(__dirname,"./dist/renderer/index.html");
     
     win.loadFile(indexPath);

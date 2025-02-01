@@ -85,6 +85,25 @@ class FileManager{
       throw err;
     }
   }
+
+  /**
+   * 递归删除文件夹或文件
+   * @param {string} path 
+   */
+  static deleteSync=path=>{
+    try{
+      fs.rmSync(path,{
+        recursive:true,
+        force:true,
+      });
+
+    }catch(err){
+      console.error("Failed to delete: "+path,err);
+      
+      throw err;
+    }
+  }
+  
 }
 
 module.exports=FileManager;

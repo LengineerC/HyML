@@ -1,5 +1,8 @@
+const fs=require('fs');
 const { Auth } = require("msmc");
 const logger = require("../log4js/logger");
+const ConfigManager = require("./ConfigManager");
+const path = require('path');
 
 class MCManager{
 
@@ -25,6 +28,18 @@ class MCManager{
     }
   }
 
+  /**
+   * @returns {any[]}
+   */
+  // static getInstalledMcDirs=()=>{
+  //   let dirs=[];
+  //   const savePath=ConfigManager.readBaseConfig().savePath ?? "";
+  //   const versionDirPath=path.join(savePath,"versions");
+
+  //   if(fs.existsSync(savePath)){
+
+  //   }
+  // }
 }
 
 module.exports=MCManager;
