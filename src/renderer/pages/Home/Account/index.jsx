@@ -1,23 +1,23 @@
 import React, { useState } from 'react';
-import Card from '../../components/Card';
-import { STATUS_CODE } from '../../../main/utils/enum';
-import {
-  SAVE_BASE_CONFIG,
-  SAVE_ONLINE_USERS,
-} from "../../redux/actions/constants";
+import Card from '../../../components/Card';
+import { STATUS_CODE } from '../../../../main/utils/enum';
 import { useDispatch, useSelector } from 'react-redux';
-import { Switch, Popover, message, Select } from 'antd';
+import { Switch, message, Select } from 'antd';
 import { 
   PlusOutlined, 
   PoweroffOutlined,
   UserSwitchOutlined,
 } from '@ant-design/icons';
+import TextPopover from "../../../components/TextPopover/index";
+import { saveBaseConfig } from '../../../redux/slices/configSlice';
+import { saveOnlineUsers } from '../../../redux/slices/userSlice';
 
 import "./index.scss";
 
 export default function Account() {
   const dispatch=useDispatch();
-  const { onlineUsers, offlineUsers, baseConfig } = useSelector(state => state);
+  const { onlineUsers, offlineUsers } = useSelector(state => state.user);
+  const {baseConfig}=useSelector(state=>state.config);
   const [messageApi,contextHolder]=message.useMessage();
 
   const [loginMode, setLoginMode] = useState(true);
@@ -37,19 +37,13 @@ export default function Account() {
     await window.accountApi.logout(currentOnlineUser);
 
     window.fileApi.getBaseConfig(value => {
-      dispatch({
-        type: SAVE_BASE_CONFIG,
-        payload: value
-      });
+      dispatch(saveBaseConfig(value));
 
     });
 
     window.fileApi.getOnlineUsers(value => {
       // console.log("render App:",value);
-      dispatch({
-        type: SAVE_ONLINE_USERS,
-        payload: value
-      });
+      dispatch(saveOnlineUsers(value));
 
     });
 
@@ -65,64 +59,36 @@ export default function Account() {
     console.log("handleSwitchAccount");
 
     window.fileApi.getBaseConfig(value => {
-      dispatch({
-        type: SAVE_BASE_CONFIG,
-        payload: value
-      });
+      dispatch(saveBaseConfig(value));
 
     });
   }
 
   const operationBtns = {
     logOut: (
-      <Popover
+      <TextPopover
         key="log-out"
-        overlayInnerStyle={{
-          padding: "3px"
-        }}
-        content={
-          <div
-            style={{
-              padding: "3px",
-              fontSize: "12px",
-              color: "#1f1e33"
-            }}
-          >
-            退出登录
-          </div>
-        }
         placement="bottom"
+        text="退出登录"
       >
         <PoweroffOutlined
           onClick={handleLogOut}
           className='icon'
         />
-      </Popover>
+      </TextPopover>
+      
     ),
     switchUser: (
-      <Popover
+      <TextPopover
         key="switch-user"
-        overlayInnerStyle={{
-          padding: "3px"
-        }}
-        content={
-          <div
-            style={{
-              padding: "3px",
-              fontSize: "12px",
-              color: "#1f1e33"
-            }}
-          >
-            切换账号
-          </div>
-        }
-        placement="bottom"
+        placement='bottom'
+        text='切换账号'
       >
-        <UserSwitchOutlined
+         <UserSwitchOutlined
           onClick={handleSwitchAccount}
           className='icon'
         />
-      </Popover>
+      </TextPopover>
     ),
 
   };
@@ -134,19 +100,12 @@ export default function Account() {
     window.accountApi.login(value => {
       if (value === STATUS_CODE.SUCCESS) {
         window.fileApi.getBaseConfig(value => {
-          dispatch({
-            type: SAVE_BASE_CONFIG,
-            payload: value
-          });
+          dispatch(saveBaseConfig(value));
 
         });
 
         window.fileApi.getOnlineUsers(value => {
-          // console.log("render App:",value);
-          dispatch({
-            type: SAVE_ONLINE_USERS,
-            payload: value
-          });
+          dispatch(saveOnlineUsers(value));
 
         });
 
@@ -189,10 +148,7 @@ export default function Account() {
     });
 
     window.fileApi.getBaseConfig(value => {
-      dispatch({
-        type: SAVE_BASE_CONFIG,
-        payload: value
-      });
+      dispatch(saveBaseConfig(value));
 
     });
 
@@ -232,33 +188,18 @@ export default function Account() {
                 onChange={handleAccountSelected}
               />
 
-              <Popover
-                overlayInnerStyle={{
-                  padding: "3px"
-                }}
-                content={
-                  <div
-                    style={{
-                      padding: "3px",
-                      fontSize: "12px",
-                      color: "#1f1e33"
-                    }}
-                  >
-                    添加账号
-                  </div>
-                }
-                placement="bottom"
+              <TextPopover
+                text='添加账号'
               >
                 <PlusOutlined
                   className={`add-btn ${!canLoginBtnClick && "disabled"}`}
                   onClick={
                     canLoginBtnClick ?
-                      handleLogin :
-                      () => { }
+                    handleLogin :
+                    () => { }
                   }
                 />
-              </Popover>
-
+              </TextPopover>
             </div>
           }
         </div>
@@ -282,27 +223,6 @@ export default function Account() {
         </div>
 
         <div className={`actions`}>
-          <Popover
-            overlayInnerStyle={{
-              padding: "3px"
-            }}
-            content={
-              <div
-                style={{
-                  padding: "3px",
-                  fontSize: "12px",
-                  color: "#1f1e33"
-                }}
-              >
-                退出登录
-              </div>
-            }
-            placement="bottom"
-          >
-            <PoweroffOutlined
-              className='icon'
-            />
-          </Popover>
         </div>
       </>
     );

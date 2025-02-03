@@ -3,4 +3,7 @@ export const STATUS_CODE={
   ERROR:1,
 };
 
-
+export const SELECTED_LOCATION={
+  INSTALLED:0,
+  DOWNLOAD:1,
+};

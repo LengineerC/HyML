@@ -36,7 +36,7 @@
   "scripts": {
     "start-main": "cross-env NODE_ENV=development electron .",
     "start-renderer": "cross-env NODE_ENV=development webpack serve --config config/webpack.dev.js",
-    "start-dev":"node scripts/start-dev.js",
+    "start-dev": "node scripts/start-dev.js",
     "build-renderer": "webpack --config config/webpack.prod.js",
     "build-main": "cross-env NODE_ENV=production webpack --config config/webpack.main.prod.js",
     "gen-exe": "npm run build-renderer && npm run build-main && electron-builder --win"
@@ -46,6 +46,7 @@
     "@babel/core": "^7.26.7",
     "@babel/preset-env": "^7.26.7",
     "@babel/preset-react": "^7.26.3",
+    "@reduxjs/toolkit": "^2.5.1",
     "antd": "^5.23.2",
     "axios": "^1.7.9",
     "babel-loader": "^9.2.1",

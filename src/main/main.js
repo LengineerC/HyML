@@ -7,6 +7,7 @@ const {
   FILE_API_EVENTS,
   ACCOUNT_API_EVENTS,
   OS_API_EVENTS,
+  MINECRAFT_API_EVENTS,
 }=require("./ipcEvents");
 const logger=require("./log4js/logger");
 const ConfigManager = require('./components/ConfigManager');
@@ -176,6 +177,11 @@ const handleLoginOut=user=>{
   });
 }
 
+const getInstalledVersions=()=>{
+  
+  return MCManager.getInstalledMcDirs();
+}
+
 app.whenReady().then(() => {
   createWindow();
 
@@ -204,6 +210,9 @@ app.whenReady().then(() => {
   // Listen account events
   ipcMain.on(ACCOUNT_API_EVENTS.LOGIN,handleLogin);
   ipcMain.handle(ACCOUNT_API_EVENTS.LOGOUT,(_,user)=>handleLoginOut(user));
+
+  // Listen minecraft events
+  ipcMain.handle(MINECRAFT_API_EVENTS.GET_INSTALLED_VERSIONS,getInstalledVersions);
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {

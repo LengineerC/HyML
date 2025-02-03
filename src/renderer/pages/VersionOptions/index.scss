@@ -1,0 +1,113 @@
+@use "sass:color";
+@use "../../styles/global.scss" as *;
+
+.version-options-main{
+    display: flex;
+    padding: 8px 8px 0;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    width: auto;
+    height: 100%;
+    overflow-y: scroll;
+
+    &::-webkit-scrollbar {
+        width: 5px;
+    }
+    &::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    &::-webkit-scrollbar-thumb {
+        background: #eee;
+        border-radius: 50px;
+    }
+    &::-webkit-scrollbar-thumb:active {
+        background: #ddd;
+    }
+
+    .save-btn{
+        @extend %flex-hv-center;
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        background-color: color.mix($themeColor,#fff,60%);
+        border-radius: 100px;
+        height: 40px;
+        width: 40px;
+        box-shadow: 0px 0px 10px 1px #33333333;
+        transition: 0.2s;
+
+        .save-icon{
+            color: #fff;
+            font-size: 20px;
+        }
+
+        &:hover{
+            background-color: color.mix($themeColor,#fff,55%);
+        }
+
+        &:active{
+            background-color: color.mix($themeColor,#fff,70%);
+            transform: scale(0.98);
+        }
+    }
+
+    .version-name-option{
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+
+        .version-icon{
+            height: 36px;
+            width: 36px;
+            object-fit: contain;
+
+            img{
+                width: 100%;
+                height: 100%;
+            }
+        }
+
+        .label{
+            font-size: 13px;
+            color: color.mix($textColor1,#fff,70%);
+            margin-right: 8px;
+            white-space: nowrap;
+        }
+
+        .version-name{
+            height: auto;
+            width: auto;
+            display: flex;
+            align-items: center;
+
+            .name-container{
+                color: $textColor1;
+                font-weight: bold;
+                font-size: 16px;
+                margin-right: 20px;
+                max-width: 300px;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+            }
+
+            .icon {
+                color: $themeColor;
+                cursor: pointer;
+    
+                &:hover {
+                    color: color.mix($themeColor, #ffffff, 80%);
+                }
+    
+                &:active {
+                    color: color.mix($themeColor, #fff, 60%);
+                }
+            }
+        }
+
+    }
+
+}

@@ -5,17 +5,18 @@ import {
   FolderOpenOutlined,
   FolderOutlined,
   RightOutlined,
-
 } from '@ant-design/icons';
-import { Input, Popover, Slider } from 'antd';
+import { Input, Slider } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
-import { SAVE_BASE_CONFIG } from '../../redux/actions/constants';
 import { STATUS_CODE } from '../../../main/utils/enum';
+import TextPopover from '../../components/TextPopover';
+import { saveBaseConfig } from '../../redux/slices/configSlice';
 
 import "./index.scss";
 
 export default function Settings() {
-  const {baseConfig,osInfo}=useSelector(state=>state);
+  const {baseConfig}=useSelector(state=>state.config);
+  const osInfo=useSelector(state=>state.osInfo);
   
   const dispatch=useDispatch();
 
@@ -37,13 +38,10 @@ export default function Settings() {
     const savePath=await window.fileApi.chooseResource("dir");
  
     if(savePath){
-      dispatch({
-        type:SAVE_BASE_CONFIG,
-        payload:{
-          ...baseConfig,
-          savePath
-        }
-      });
+      dispatch(saveBaseConfig({
+        ...baseConfig,
+        savePath,
+      }));
     }
     
   }
@@ -64,10 +62,8 @@ export default function Settings() {
 
       if(code===STATUS_CODE.SUCCESS){
         window.fileApi.getBaseConfig(value=>{
-          dispatch({
-            type:SAVE_BASE_CONFIG,
-            payload:value,
-          });
+          dispatch(saveBaseConfig(value));
+
         });
       }
     }
@@ -110,49 +106,24 @@ export default function Settings() {
               disabled
             />
 
-            {currentBaseConfig?.savePath && <Popover
-              overlayInnerStyle={{
-                padding: "3px"
-              }}
-              content={
-                <div
-                  style={{
-                    padding: "3px",
-                    fontSize: "12px",
-                    color: "#1f1e33"
-                  }}
-                >
-                  打开文件夹
-                </div>
-              }
+            {currentBaseConfig?.savePath && 
+            <TextPopover
+              text='打开文件夹'
             >
               <FolderOpenOutlined 
                 onClick={openSavePath}
                 className='icon-btn'
               />
-            </Popover>}
+            </TextPopover>}
 
-            <Popover
-              overlayInnerStyle={{
-                padding: "3px"
-              }}
-              content={
-                <div
-                  style={{
-                    padding: "3px",
-                    fontSize: "12px",
-                    color: "#1f1e33"
-                  }}
-                >
-                  修改文件夹
-                </div>
-              }
+            <TextPopover
+              text='修改文件夹'
             >
               <FolderOutlined
                 onClick={editSavePath}
                 className='icon-btn'
               />
-            </Popover>
+            </TextPopover>
           </div>
         </div>
 

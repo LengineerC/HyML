@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { HomeOutlined, SettingOutlined } from '@ant-design/icons';
+import { NavLink } from 'react-router-dom';
 
 import "./index.scss";
-import { NavLink } from 'react-router-dom';
 
 const tabs=[
   {

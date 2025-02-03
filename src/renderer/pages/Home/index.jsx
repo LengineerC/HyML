@@ -7,88 +7,103 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { getMinecraftVersions } from '../../services/minecraftService';
 import mcVersionsJson from './mcversions';
+import Account from './Account/index';
+import { SELECTED_LOCATION } from '../../utils/enum';
+import { useNavigate } from 'react-router-dom';
+import { saveInstalledMcVersions, saveMcVersions } from '../../redux/slices/minecraftSlice';
 
 import "./index.scss";
 
 import mincraftIcon from "../../assets/images/minecraft.svg";
-import Account from '../Account';
-import { SAVE_MC_VERSIONS } from '../../redux/actions/constants';
-
-const SELECTED_LOCATION={
-  INSTALLED:0,
-  DOWNLOAD:1,
-};
 
 export default function Home() {
+  const navigate=useNavigate();
   const dispatch=useDispatch();
-  const { baseConfig, mcVersions } = useSelector(state => state);
+  const { mcVersions, installedMcVersions } = useSelector(state => state.minecraft);
   const [messageApi,contextHolder]=message.useMessage();
 
   const [showVersionSelector,setShowVersionSelector]=useState(false);
   const [selectedLocation,setSelectedLocation]=useState(SELECTED_LOCATION.INSTALLED);
 
   useEffect(()=>{
-    getMinecraftVersions().then(mcVersions=>{
-      // console.log(mcVersions.length);
+    
+    if(mcVersions.length<=0){
+      getMinecraftVersions().then(mcVersions=>{
+        let formatedMcVersions=mcVersions.map(version=>({
+          ...version,
+          dateModified:version.dateModified.toISOString(),
+        }));
+        dispatch(saveMcVersions(formatedMcVersions));
       
-      dispatch({
-        type:SAVE_MC_VERSIONS,
-        payload:mcVersions,
+      }).catch(err=>{
+        console.error(err);
+      
+        messageApi.error("获取正式版本列表失败");
       });
 
-    }).catch(err=>{
-      console.error(err);
-      
-      messageApi.error("获取正式版本列表失败");
-    });
-
+    }
+          
+    if(installedMcVersions.length<=0){
+      window.minecraftApi.getInstalledVersions()
+        .then(versions=>{
+          dispatch(saveInstalledMcVersions(versions));
+        }).catch(err=>{
+          console.error("Failed to fetch installed versions:",err);
+          
+        });
+    }
 
   },[]);
 
-  // useEffect(()=>{
-  //   console.log("baseConfig",baseConfig);
-    
-  // },[baseConfig])
-
-
   const handleSelectedVersion=version=>{
     setShowVersionSelector(false);
-    console.log(version);
+    navigate("/version-options",{
+      state:{
+        param:version,
+        type:SELECTED_LOCATION.DOWNLOAD
+      }
+    });
+    // console.log(version);
   }
 
   const createVersions=()=>{
-    if(mcVersions&&mcVersions.length>0){
-      // console.log("mcVersions",mcVersions);
-      
-      // return mcVersionsJson.map((version,index)=>{
-      //   const dateString=version.dateModified.substring(0,10);
+    if(selectedLocation===SELECTED_LOCATION.DOWNLOAD){
+      // if(mcVersions&&mcVersions.length>0){
+        // console.log("mcVersions",mcVersions);
+        
+        return mcVersionsJson.map((version,index)=>{
+          const dateString=version.dateModified.substring(0,10);
+  
+        // return mcVersions.map((version,index)=>{
+        //   const date=new Date(version.dateModified);
+        //   const dateString=date.toISOString().substring(0,10);
+    
+          return(
+            <div 
+            className='version' 
+            key={index}
+            onClick={()=>handleSelectedVersion(version)}
+            >
+              <div className='col-1'>
+                <div className='icon'>
+                  <img src={mincraftIcon} alt="" />
+                </div>
+    
+                <div className='version-label'>
+                  {version.versionString}
+                </div>
+              </div>
+    
+              <div className='time-container'>
+                {dateString}
+              </div>
+            </div>
+          );
+        });
+      // }
 
-      return mcVersions.map((version,index)=>{
-        const date=new Date(version.dateModified);
-        const dateString=date.toISOString().substring(0,10);
-  
-        return(
-          <div 
-          className='version' 
-          key={index}
-          onClick={()=>handleSelectedVersion(version)}
-          >
-            <div className='col-1'>
-              <div className='icon'>
-                <img src={mincraftIcon} alt="" />
-              </div>
-  
-              <div className='version-label'>
-                {version.versionString}
-              </div>
-            </div>
-  
-            <div className='time-container'>
-              {dateString}
-            </div>
-          </div>
-        );
-      });
+    }else{
+
     }
 
   }

@@ -36,6 +36,10 @@ const ACCOUNT_API_EVENTS={
   LOGOUT:"logout",
 };
 
+const MINECRAFT_API_EVENTS={
+  GET_INSTALLED_VERSIONS:"get-installed-versions",
+
+};
 
 module.exports={
   MAIN_API_EVENTS,
@@ -43,4 +47,5 @@ module.exports={
   WINDOW_API_EVENTS,
   FILE_API_EVENTS,
   ACCOUNT_API_EVENTS,
+  MINECRAFT_API_EVENTS,
 }

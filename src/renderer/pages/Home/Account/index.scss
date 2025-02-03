@@ -1,5 +1,5 @@
 @use "sass:color";
-@use "../../styles/global.scss" as *;
+@use "../../../styles/global.scss" as *;
 
 .account-container {
     @extend %flex-hv-center;

@@ -6,6 +6,7 @@ const {
   FILE_API_EVENTS,
   ACCOUNT_API_EVENTS,
   OS_API_EVENTS,
+  MINECRAFT_API_EVENTS,
 }=require("./ipcEvents");
 
 contextBridge.exposeInMainWorld("mainApi",{
@@ -102,4 +103,10 @@ contextBridge.exposeInMainWorld("accountApi",{
     ipcRenderer.invoke(ACCOUNT_API_EVENTS.LOGOUT,user);
   },
 
+});
+
+contextBridge.exposeInMainWorld("minecraftApi",{
+  getInstalledVersions(){
+    return ipcRenderer.invoke(MINECRAFT_API_EVENTS.GET_INSTALLED_VERSIONS);
+  }
 });

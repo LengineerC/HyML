@@ -3,12 +3,9 @@ import Header from './components/Header/index';
 import { useRoutes } from 'react-router-dom';
 import routes from './route/index';
 import { useDispatch } from 'react-redux';
-import {
-  SAVE_BASE_CONFIG,
-  SAVE_ONLINE_USERS,
-  SAVE_OFFLINE_USERS,
-  SAVE_OS_INFO,
-} from "./redux/actions/constants";
+import { saveTotalMemory } from './redux/slices/osInfoSlice';
+import { saveBaseConfig } from './redux/slices/configSlice';
+import { saveOfflineUsers, saveOnlineUsers } from './redux/slices/userSlice';
 
 import "./App.scss";
 
@@ -19,37 +16,21 @@ export default function App() {
   useEffect(()=>{
     window.mainApi.onMainProcessReady(async()=>{
       const totalMemory=await window.osApi.getTotalMemory();
-      // console.log("totalMemory",totalMemory);
-      dispatch({
-        type:SAVE_OS_INFO,
-        payload:{
-          totalMemory
-        }
-      });
+      dispatch(saveTotalMemory(totalMemory));
       
-
       window.fileApi.getBaseConfig(value=>{
-        dispatch({
-          type:SAVE_BASE_CONFIG,
-          payload:value
-        });
+        dispatch(saveBaseConfig(value));
         
       });
 
       window.fileApi.getOnlineUsers(value=>{
-        // console.log("render App:",value);
-        dispatch({
-          type:SAVE_ONLINE_USERS,
-          payload:value
-        });
+        dispatch(saveOnlineUsers(value));
 
       });
 
       window.fileApi.getOfflineUsers(value=>{
-        dispatch({
-          type:SAVE_OFFLINE_USERS,
-          payload:value
-        });
+
+        dispatch(saveOfflineUsers(value));
       });
     });
 
@@ -60,7 +41,9 @@ export default function App() {
       <Header />
 
       <div className='body'>
-        {elements}
+        {/* <Suspense> */}
+          {elements}
+        {/* </Suspense> */}
       </div>
     </div>
   )
