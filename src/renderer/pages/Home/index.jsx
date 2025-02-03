@@ -19,39 +19,47 @@ import mincraftIcon from "../../assets/images/minecraft.svg";
 export default function Home() {
   const navigate=useNavigate();
   const dispatch=useDispatch();
-  const { mcVersions, installedMcVersions } = useSelector(state => state.minecraft);
+  const { mcVersions, installedMcVersions, currentMcOptions, online } = useSelector(state => state.minecraft);
+  const {baseConfig}=useSelector(s=>s.config);
+  const {onlineUsers}=useSelector(s=>s.user);
   const [messageApi,contextHolder]=message.useMessage();
 
   const [showVersionSelector,setShowVersionSelector]=useState(false);
   const [selectedLocation,setSelectedLocation]=useState(SELECTED_LOCATION.INSTALLED);
 
-  useEffect(()=>{
-    
-    if(mcVersions.length<=0){
-      getMinecraftVersions().then(mcVersions=>{
-        let formatedMcVersions=mcVersions.map(version=>({
-          ...version,
-          dateModified:version.dateModified.toISOString(),
-        }));
-        dispatch(saveMcVersions(formatedMcVersions));
-      
-      }).catch(err=>{
-        console.error(err);
-      
-        messageApi.error("获取正式版本列表失败");
-      });
+  const [startBtnAvailable,setStartBtnAvailable]=useState(true);
 
-    }
+  useEffect(()=>{
+    console.log("Loaded Home");
+    
+    // if(mcVersions.length<=0){
+    //   getMinecraftVersions().then(mcVersions=>{
+    //     let formatedMcVersions=mcVersions.map(version=>({
+    //       ...version,
+    //       dateModified:version.dateModified.toISOString(),
+    //     }));
+    //     dispatch(saveMcVersions(formatedMcVersions));
+      
+    //   }).catch(err=>{
+    //     console.error(err);
+      
+    //     messageApi.error("获取正式版本列表失败");
+    //   });
+
+    // }
           
     if(installedMcVersions.length<=0){
       window.minecraftApi.getInstalledVersions()
         .then(versions=>{
+          // console.log(versions);
+          
           dispatch(saveInstalledMcVersions(versions));
         }).catch(err=>{
           console.error("Failed to fetch installed versions:",err);
           
         });
     }
+
 
   },[]);
 
@@ -106,6 +114,19 @@ export default function Home() {
 
     }
 
+  }
+
+  const startGame=async()=>{
+    if(online){
+      // console.log("currentMcOptions",currentMcOptions);
+      const {version,versionName}=currentMcOptions;
+      const authorization=onlineUsers.filter(user=>user.uuid===baseConfig.currentOnlineUser)[0] ?? null;
+      
+      if(authorization){
+        const code=await window.minecraftApi.launchGame(online,version,authorization,versionName);
+      }
+
+    }
   }
 
   return (
@@ -180,13 +201,18 @@ export default function Home() {
               </div>
 
               <div className='row'>
-                <div className='btn-start'>
+                <div 
+                  className={startBtnAvailable?"btn-start":"btn-start-disabled"}
+                  onClick={
+                    startBtnAvailable?startGame:()=>{}
+                  }
+                >
                   <div className='label'>
-                    启动游戏
+                    {startBtnAvailable?"启动游戏":"游戏启动中..."}
                   </div>
 
                   <div className='info'>
-                    1.20.4
+                    {currentMcOptions.versionName || "未选择版本"}
                   </div>
                 </div>
               </div>

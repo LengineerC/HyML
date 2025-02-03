@@ -1,17 +1,21 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useLocation } from 'react-router-dom';
-import { SELECTED_LOCATION } from '../../utils/enum';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { SELECTED_LOCATION, VERSION_TYPE } from '../../utils/enum';
 import Card from '../../components/Card';
 import { Input, message } from 'antd';
 import { CheckOutlined, CloseOutlined, DownloadOutlined, FormOutlined } from '@ant-design/icons';
 import { FILENAME_PATTERN } from "../../utils/regexp";
 import TextPopover from '../../components/TextPopover';
+import { useDispatch } from 'react-redux';
+import { saveCurrentMcOptions } from '../../redux/slices/minecraftSlice';
 
 import "./index.scss";
 
 import grassBlockIcon from "../../assets/images/grass_block.svg";
 
 export default function VersionOptions() {
+  const dispatch=useDispatch();
+  const navigate=useNavigate()
   const {param:version,type}=useLocation().state;
   const [messageApi,contextHolder]=message.useMessage();
 
@@ -55,6 +59,25 @@ export default function VersionOptions() {
     }
   }
 
+  const handleSaveOptions=()=>{
+    const {versionString}=version;
+
+    if(type===SELECTED_LOCATION.DOWNLOAD){
+      dispatch(saveCurrentMcOptions({
+        versionName,
+        version:{
+          number:versionString,
+          type: VERSION_TYPE.RELEASE,
+        }
+      }));
+
+      navigate("/");
+
+    }else{
+
+    }
+  }
+
   return (
     <div className='version-options-main'>
       {contextHolder}
@@ -63,7 +86,10 @@ export default function VersionOptions() {
         text='保存'
         placement="left"
       >
-        <div className='save-btn'>
+        <div 
+          className='save-btn'
+          onClick={handleSaveOptions}
+        >
           <DownloadOutlined 
             className='save-icon'
             />

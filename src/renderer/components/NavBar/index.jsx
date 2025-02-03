@@ -23,7 +23,7 @@ export default function NavBar() {
   const createTabs=()=>tabs.map((tab,index)=>{
 
     return (
-      <NavLink key={index} to={tab.path}>
+      <NavLink key={index} to={tab.path} replace={false}>
         <div 
         onClick={()=>setTabIndex(index)}
         className={`nav-tab ${tabIndex===index&&"active"}`}

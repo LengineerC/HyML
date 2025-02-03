@@ -61,6 +61,34 @@
                 }
             }
 
+
+            .btn-start-disabled{
+                @extend %flex-hv-center;
+                justify-content: space-between;
+                flex-direction: column;
+                padding: 10px 0;
+                // box-sizing: border-box;
+                height: 70px;
+                width: 265px;
+                border-radius: 5px;
+                cursor: not-allowed;
+                background-color: color.mix($themeColor,#ffffff,50%);
+
+                .label{
+                    color: #fff;
+                    font-size: 20px;
+                    font-weight: bold;
+                }
+
+                .info{
+                    font-size: 13px;
+                    color: #eee;
+                    max-width: 70%;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+            }
             .btn-start{
                 @extend %flex-hv-center;
                 justify-content: space-between;
@@ -83,6 +111,10 @@
                 .info{
                     font-size: 13px;
                     color: #eee;
+                    max-width: 70%;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
                 }
 
                 &:hover{

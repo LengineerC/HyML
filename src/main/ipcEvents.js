@@ -39,6 +39,7 @@ const ACCOUNT_API_EVENTS={
 const MINECRAFT_API_EVENTS={
   GET_INSTALLED_VERSIONS:"get-installed-versions",
 
+  LAUNCH_GAME:"launch-game",
 };
 
 module.exports={

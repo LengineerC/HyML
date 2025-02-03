@@ -182,6 +182,12 @@ const getInstalledVersions=()=>{
   return MCManager.getInstalledMcDirs();
 }
 
+const launchGame=params=>{
+  const {online,version,authorization,versionName}=params;
+
+  MCManager.launchGame(online,version,authorization,versionName);
+}
+
 app.whenReady().then(() => {
   createWindow();
 
@@ -213,6 +219,7 @@ app.whenReady().then(() => {
 
   // Listen minecraft events
   ipcMain.handle(MINECRAFT_API_EVENTS.GET_INSTALLED_VERSIONS,getInstalledVersions);
+  ipcMain.handle(MINECRAFT_API_EVENTS.LAUNCH_GAME,(_,params)=>launchGame(params))
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {

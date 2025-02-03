@@ -11,6 +11,7 @@ import {
 import TextPopover from "../../../components/TextPopover/index";
 import { saveBaseConfig } from '../../../redux/slices/configSlice';
 import { saveOnlineUsers } from '../../../redux/slices/userSlice';
+import { saveOnline } from '../../../redux/slices/minecraftSlice';
 
 import "./index.scss";
 
@@ -228,6 +229,11 @@ export default function Account() {
     );
   }
 
+  const handleLoginModeOnChange=checked=>{
+    setLoginMode(checked);
+    dispatch(saveOnline(checked));
+  }
+
   return (
     <Card>
       {contextHolder}
@@ -235,7 +241,7 @@ export default function Account() {
         <div className='switch'>
           <Switch
             checked={loginMode}
-            onChange={checked => setLoginMode(checked)}
+            onChange={handleLoginModeOnChange}
             checkedChildren="正版登录"
             unCheckedChildren="离线登录"
             style={{

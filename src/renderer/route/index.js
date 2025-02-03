@@ -1,22 +1,24 @@
-import React, {memo} from "react";
+import React from "react";
 import { Navigate } from "react-router-dom";
 
 import Home from "../pages/Home/index";
 import Settings from "../pages/Settings";
 import VersionOptions from "../pages/VersionOptions";
+import KeepAlive from "react-activation";
 
-// const Home = memo(() => import("../pages/Home/index"));
-// const Settings = memo(() => import("../pages/Settings"));
-// const VersionOptions = memo(() => import("../pages/VersionOptions"));
 
 const routes=[
   {
     path:"/",
-    element:<Navigate to={"/home"}/>
+    element:<Navigate to={"/home"} replace/>
   },
   {
     path:"/home",
-    element: <Home />
+    element: (
+      <KeepAlive name="home">
+        <Home />
+      </KeepAlive>
+    )
   },
   {
     path:"/version-options",
@@ -24,7 +26,7 @@ const routes=[
   },
   {
     path:"/settings",
-    element:<Settings />
+    element: <Settings />
   },
 ];
 

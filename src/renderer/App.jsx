@@ -6,8 +6,10 @@ import { useDispatch } from 'react-redux';
 import { saveTotalMemory } from './redux/slices/osInfoSlice';
 import { saveBaseConfig } from './redux/slices/configSlice';
 import { saveOfflineUsers, saveOnlineUsers } from './redux/slices/userSlice';
+import { AliveScope } from 'react-activation';
 
 import "./App.scss";
+
 
 export default function App() {
   const elements=useRoutes(routes);
@@ -41,9 +43,9 @@ export default function App() {
       <Header />
 
       <div className='body'>
-        {/* <Suspense> */}
+        <AliveScope>
           {elements}
-        {/* </Suspense> */}
+        </AliveScope>
       </div>
     </div>
   )

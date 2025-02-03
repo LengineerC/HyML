@@ -108,5 +108,19 @@ contextBridge.exposeInMainWorld("accountApi",{
 contextBridge.exposeInMainWorld("minecraftApi",{
   getInstalledVersions(){
     return ipcRenderer.invoke(MINECRAFT_API_EVENTS.GET_INSTALLED_VERSIONS);
-  }
+  },
+
+  /**
+   * @param {boolean} online 
+   * @param {string} version.number
+   * @param {string} version.type
+   * @param {any} authorization
+   * @param {string} versionName
+   */
+  launchGame(online,version,authorization,versionName){
+    // console.log(online,version,authorization,versionName);
+    
+    return ipcRenderer.invoke(MINECRAFT_API_EVENTS.LAUNCH_GAME,{online,version,authorization,versionName});
+  },
+
 });

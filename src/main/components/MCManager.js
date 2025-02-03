@@ -1,8 +1,9 @@
 const fs = require('fs');
+const path = require('path');
 const { Auth } = require("msmc");
 const logger = require("../log4js/logger");
 const ConfigManager = require("./ConfigManager");
-const path = require('path');
+const { Client } = require('minecraft-launcher-core');
 
 class MCManager {
 
@@ -89,6 +90,55 @@ class MCManager {
     }
 
     return dirs;
+  }
+
+  /**
+   * 启动游戏
+   * @param {boolean} online 
+   * @param {string} version.number
+   * @param {"release" | "snapshot"} version.type
+   * @param {any} authorization
+   * @param {string} versionName
+   */
+  static launchGame=(online,version,authorization,versionName)=>{
+    const launcher=new Client();
+    const {maxMem,savePath}=ConfigManager.readBaseConfig();
+    const directory=path.join(savePath,"versions",versionName);
+
+    let options={
+      memory:{
+        min:"1G",
+        max:maxMem+"G"
+      },
+      root:savePath,
+      version,
+      overrides:{
+        directory,
+      }
+    };
+
+    if(online) options.authorization=authorization;
+    else{
+      // TODO: add dealing with offline authorization
+
+    }
+
+    try{
+      // console.log("Launching...",options);
+      
+      launcher.launch(options);
+
+      // launcher.on("progress",(e) => console.log(e));
+      launcher.on('debug', (e) => console.log(e));
+      launcher.on('data', (e) => console.log(e));
+      // launcher.on('close', (e) => console.log(e));
+      // launcher.on('download', (e) => console.log(e));
+      // launcher.on('download-status', (e) => console.log(e));
+
+    }catch(err){
+      logger.error("Failed to launch game:",err.message);
+    }
+
   }
 
 }
