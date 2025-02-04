@@ -61,9 +61,7 @@ const createWindow = () => {
 }
 
 const readBaseConfig=()=>{
-  const baseConfig=ConfigManager.readBaseConfig();
-
-  mainWindow.webContents.send(FILE_API_EVENTS.READ_BASE_CONFIG_FINISHED,baseConfig);
+  return ConfigManager.readBaseConfig();
 }
 
 const readOnlineUsersConfig=()=>{
@@ -182,10 +180,11 @@ const getInstalledVersions=()=>{
   return MCManager.getInstalledMcDirs();
 }
 
-const launchGame=params=>{
-  const {online,version,authorization,versionName}=params;
+const launchGame=async(params)=>{
+  const {online,versionInfo,authorization,versionName,overrides}=params;
+  const code=await MCManager.launchGame(online,versionInfo,authorization,versionName,overrides);
 
-  MCManager.launchGame(online,version,authorization,versionName);
+  return code;
 }
 
 app.whenReady().then(() => {
@@ -204,7 +203,7 @@ app.whenReady().then(() => {
   });
 
   // Init and read configs
-  ipcMain.on(FILE_API_EVENTS.READ_BASE_CONFIG,readBaseConfig);
+  ipcMain.handle(FILE_API_EVENTS.READ_BASE_CONFIG,readBaseConfig);
   ipcMain.on(FILE_API_EVENTS.READ_ONLINE_USERS,readOnlineUsersConfig);
   ipcMain.on(FILE_API_EVENTS.READ_OFFLINE_USERS,readOfflineUsersConfig);
   ipcMain.handle(FILE_API_EVENTS.UPDATE_BASE_CONFIG,(_,baseConfig)=>handleUpdateBaseConfig(baseConfig));

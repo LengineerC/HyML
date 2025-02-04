@@ -20,10 +20,12 @@ export default function App() {
       const totalMemory=await window.osApi.getTotalMemory();
       dispatch(saveTotalMemory(totalMemory));
       
-      window.fileApi.getBaseConfig(value=>{
-        dispatch(saveBaseConfig(value));
-        
-      });
+      window.fileApi.getBaseConfig()
+        .then(value=>{
+          dispatch(saveBaseConfig(value));
+        }).catch(err=>{
+          console.error("Failed to get base config",err);
+        })
 
       window.fileApi.getOnlineUsers(value=>{
         dispatch(saveOnlineUsers(value));

@@ -19,6 +19,7 @@ class ConfigManager{
       savePath:null,
       currentOnlineUser:null,
       currentOfflineUser:null,
+      latestPlayedVersionId:null,
       maxMem:4,
     }
 

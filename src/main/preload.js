@@ -34,12 +34,8 @@ contextBridge.exposeInMainWorld('windowApi',{
 });
 
 contextBridge.exposeInMainWorld("fileApi",{
-  getBaseConfig(callback){
-    ipcRenderer.send(FILE_API_EVENTS.READ_BASE_CONFIG);
-
-    ipcRenderer.once(FILE_API_EVENTS.READ_BASE_CONFIG_FINISHED,(_,value)=>{
-      callback(value);
-    });
+  getBaseConfig(){
+    return ipcRenderer.invoke(FILE_API_EVENTS.READ_BASE_CONFIG);
   },
 
   updateBaseConfig(baseConfig){
@@ -112,15 +108,15 @@ contextBridge.exposeInMainWorld("minecraftApi",{
 
   /**
    * @param {boolean} online 
-   * @param {string} version.number
-   * @param {string} version.type
+   * @param {any} versionInfo
    * @param {any} authorization
    * @param {string} versionName
+   * @param {any} overrides
    */
-  launchGame(online,version,authorization,versionName){
+  launchGame(online,versionInfo,authorization,versionName,overrides){
     // console.log(online,version,authorization,versionName);
     
-    return ipcRenderer.invoke(MINECRAFT_API_EVENTS.LAUNCH_GAME,{online,version,authorization,versionName});
+    return ipcRenderer.invoke(MINECRAFT_API_EVENTS.LAUNCH_GAME,{online,versionInfo,authorization,versionName,overrides});
   },
 
 });

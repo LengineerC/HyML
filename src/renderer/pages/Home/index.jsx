@@ -8,13 +8,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getMinecraftVersions } from '../../services/minecraftService';
 import mcVersionsJson from './mcversions';
 import Account from './Account/index';
-import { SELECTED_LOCATION } from '../../utils/enum';
+import { SELECTED_LOCATION, STATUS_CODE } from '../../utils/enum';
 import { useNavigate } from 'react-router-dom';
-import { saveInstalledMcVersions, saveMcVersions } from '../../redux/slices/minecraftSlice';
+import { saveCurrentMcOptions, saveInstalledMcVersions, saveMcVersions } from '../../redux/slices/minecraftSlice';
 
 import "./index.scss";
 
 import mincraftIcon from "../../assets/images/minecraft.svg";
+import grassBlockIcon from "../../assets/images/grass_block.svg";
+import { saveBaseConfig } from '../../redux/slices/configSlice';
 
 export default function Home() {
   const navigate=useNavigate();
@@ -49,29 +51,53 @@ export default function Home() {
     // }
           
     if(installedMcVersions.length<=0){
-      window.minecraftApi.getInstalledVersions()
-        .then(versions=>{
-          // console.log(versions);
-          
-          dispatch(saveInstalledMcVersions(versions));
-        }).catch(err=>{
-          console.error("Failed to fetch installed versions:",err);
-          
-        });
+      getInstalledVersions();
     }
 
 
   },[]);
 
-  const handleSelectedVersion=version=>{
-    setShowVersionSelector(false);
-    navigate("/version-options",{
-      state:{
-        param:version,
-        type:SELECTED_LOCATION.DOWNLOAD
+  useEffect(()=>{
+    const setLatestPlayedVersion=()=>{
+      const latestPlayedIndex=installedMcVersions.findIndex(version=>version.versionInfo.versionId===baseConfig.latestPlayedVersionId);
+      
+      if(latestPlayedIndex!==-1){
+        // console.log("latestPlayedIndex",latestPlayedIndex);
+        
+        dispatch(saveCurrentMcOptions(installedMcVersions[latestPlayedIndex]));
       }
-    });
-    // console.log(version);
+    }
+
+    if(Object.keys(baseConfig).length>0 && installedMcVersions.length>0){
+      setLatestPlayedVersion();
+    }
+
+  },[baseConfig,installedMcVersions])
+
+
+  const getInstalledVersions=async()=>{
+    const versions=await window.minecraftApi.getInstalledVersions();
+    dispatch(saveInstalledMcVersions(versions));
+  }
+
+  const getBaseConfig=async()=>{
+    const baseConfig=await window.fileApi.getBaseConfig();
+    dispatch(saveBaseConfig(baseConfig));
+  }
+
+  const handleSelectedVersion=(version,type)=>{
+    setShowVersionSelector(false);
+
+    if(type===SELECTED_LOCATION.DOWNLOAD){
+      navigate("/version-options",{
+        state:{
+          param:version,
+          type:SELECTED_LOCATION.DOWNLOAD
+        }
+      });
+    }else if(type===SELECTED_LOCATION.INSTALLED){
+      dispatch(saveCurrentMcOptions(version));
+    }
   }
 
   const createVersions=()=>{
@@ -90,7 +116,7 @@ export default function Home() {
             <div 
             className='version' 
             key={index}
-            onClick={()=>handleSelectedVersion(version)}
+            onClick={()=>handleSelectedVersion(version,SELECTED_LOCATION.DOWNLOAD)}
             >
               <div className='col-1'>
                 <div className='icon'>
@@ -111,19 +137,78 @@ export default function Home() {
       // }
 
     }else{
+      // console.log("installedMcVersions",installedMcVersions);
+      
+      return installedMcVersions.map((version,index)=>{
 
+        return(
+          <div
+            className='version'
+            key={"installed"+index}
+            onClick={()=>handleSelectedVersion(version,SELECTED_LOCATION.INSTALLED)}
+          >
+            <div className='col-1'>
+              <div className='icon'>
+                <img src={grassBlockIcon} alt="" />
+              </div>
+  
+              <div className='version-label'>
+                {version.versionName}
+              </div>
+            </div>
+  
+            <div className='time-container'>
+              {version.versionInfo.version.number}
+            </div>
+          </div>
+        );
+      });
     }
 
   }
 
+  const handleVersionOpsClicked=()=>{
+    const {versionInfo:{versionId=null}}=currentMcOptions;
+
+    if(!versionId){
+      messageApi.error("版本未安装，请点击开始游戏后安装");
+    }else{
+      console.log("to version options");
+      
+    }
+  }
+
   const startGame=async()=>{
+    // console.log("currentMcOptions",currentMcOptions);
+
+    if(!currentMcOptions.hasOwnProperty("versionInfo")){
+      messageApi.error("未选择版本");
+      return;
+    }
+    
+    setStartBtnAvailable(false);
+    
     if(online){
-      // console.log("currentMcOptions",currentMcOptions);
-      const {version,versionName}=currentMcOptions;
+      console.log("currentMcOptions",currentMcOptions);
+      const {versionInfo,versionName,minecraftJar=null,versionJson=null}=currentMcOptions;
+      const overrides={minecraftJar,versionJson};
       const authorization=onlineUsers.filter(user=>user.uuid===baseConfig.currentOnlineUser)[0] ?? null;
       
       if(authorization){
-        const code=await window.minecraftApi.launchGame(online,version,authorization,versionName);
+        const code=await window.minecraftApi.launchGame(online,versionInfo,authorization,versionName,overrides);
+        // console.log("code",code);
+
+        if(code===STATUS_CODE.ERROR){
+          console.error("启动失败");
+          
+        }else{
+          if(installedMcVersions.findIndex(version=>version.versionName===versionName)===-1){
+            getInstalledVersions();
+            getBaseConfig();
+          }
+        }
+
+        setStartBtnAvailable(true);
       }
 
     }
@@ -189,13 +274,18 @@ export default function Home() {
             <div className='version-container'>
               <div className='row'>
                 <div 
-                className='btn'
-                onClick={()=>setShowVersionSelector(true)}
+                className={startBtnAvailable?"btn":"btn-disabled"}
+                onClick={
+                  startBtnAvailable?()=>setShowVersionSelector(true):null
+                }
                 >
                   版本选择
                 </div>
 
-                <div className='btn'>
+                <div 
+                className={startBtnAvailable?"btn":"btn-disabled"}
+                onClick={handleVersionOpsClicked}
+                >
                   版本设置
                 </div>
               </div>
@@ -204,7 +294,7 @@ export default function Home() {
                 <div 
                   className={startBtnAvailable?"btn-start":"btn-start-disabled"}
                   onClick={
-                    startBtnAvailable?startGame:()=>{}
+                    startBtnAvailable?startGame:null
                   }
                 >
                   <div className='label'>

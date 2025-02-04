@@ -33,7 +33,7 @@ export default function Account() {
   }
 
   const handleLogOut = async () => {
-    const currentOnlineUser = onlineUsers.filter(onlineUser => onlineUser?.uuid === baseConfig.currentOnlineUser)[0];
+    const currentOnlineUser = onlineUsers.filter(onlineUser => onlineUser?.uuid === baseConfig?.currentOnlineUser)[0];
 
     await window.accountApi.logout(currentOnlineUser);
 
@@ -57,7 +57,7 @@ export default function Account() {
       ...baseConfig,
       currentOnlineUser: null
     });
-    console.log("handleSwitchAccount");
+    // console.log("handleSwitchAccount");
 
     window.fileApi.getBaseConfig(value => {
       dispatch(saveBaseConfig(value));
@@ -140,7 +140,7 @@ export default function Account() {
   }
 
   const handleAccountSelected = async (value) => {
-    console.log("handleAccountSelected", value);
+    // console.log("handleAccountSelected", value);
     setCanLoginBtnClick(false);
 
     await window.fileApi.updateBaseConfig({
@@ -157,7 +157,7 @@ export default function Account() {
   }
 
   const createOnlineDisplay = () => {
-    const currentOnlineUser = onlineUsers.filter(onlineUser => onlineUser?.uuid === baseConfig.currentOnlineUser)[0] || null;
+    const currentOnlineUser = onlineUsers.filter(onlineUser => onlineUser?.uuid === baseConfig?.currentOnlineUser)[0] || null;
 
     const avatar = currentOnlineUser ? (
       <img src={`https://crafatar.com/avatars/${currentOnlineUser.uuid}?size=128&overlay`} alt="" />

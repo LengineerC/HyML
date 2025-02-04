@@ -14,7 +14,6 @@ const WINDOW_API_EVENTS={
 
 const FILE_API_EVENTS={
   READ_BASE_CONFIG:"read-base-config",
-  READ_BASE_CONFIG_FINISHED:"read-base-config-finished",
   UPDATE_BASE_CONFIG:"update-base-config",
 
   READ_ONLINE_USERS:"read-online-users",

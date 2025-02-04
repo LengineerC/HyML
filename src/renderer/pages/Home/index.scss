@@ -60,6 +60,19 @@
                     border: 1px solid color.mix($themeColor,#fff,50%);
                 }
             }
+            .btn-disabled{
+                $disabledColor:color.mix($themeColor,#fff,60%);
+                @extend %flex-hv-center;
+                cursor: not-allowed;
+                padding: 3px 10px;
+                color: $disabledColor;
+                margin: 0 10px;
+                font-size: 14px;
+                min-width: 100px;
+                height: 30px;
+                border-radius: 5px;
+                border: 1px solid $disabledColor;
+            }
 
 
             .btn-start-disabled{
@@ -67,7 +80,7 @@
                 justify-content: space-between;
                 flex-direction: column;
                 padding: 10px 0;
-                // box-sizing: border-box;
+                box-sizing: border-box;
                 height: 70px;
                 width: 265px;
                 border-radius: 5px;
@@ -136,30 +149,6 @@
 
                 &:active{
                     transform: scale(0.97);
-                }
-            }
-
-            .btn-start-disabled{
-                @extend %flex-hv-center;
-                justify-content: space-between;
-                flex-direction: column;
-                padding: 10px 0;
-                height: 50px;
-                width: 265px;
-                border-radius: 5px;
-                background-color: color.mix($themeColor,#ffffff,60%);
-                cursor: not-allowed;
-                transition: 0.2s;
-
-                .label{
-                    color: #fff;
-                    font-size: 20px;
-                    font-weight: bold;
-                }
-
-                .info{
-                    font-size: 13px;
-                    color: #eee;
                 }
             }
 
@@ -349,6 +338,11 @@
                         }
 
                         .version-label{
+                            width: 200px;
+                            max-width: 200px;
+                            overflow: hidden;
+                            white-space: nowrap;
+                            text-overflow: ellipsis;
                             font-size: 14px;
                             color: $textColor1;
                         }

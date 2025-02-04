@@ -65,9 +65,11 @@ export default function VersionOptions() {
     if(type===SELECTED_LOCATION.DOWNLOAD){
       dispatch(saveCurrentMcOptions({
         versionName,
-        version:{
-          number:versionString,
-          type: VERSION_TYPE.RELEASE,
+        versionInfo:{
+          version:{
+            number:versionString,
+            type: VERSION_TYPE.RELEASE,
+          },
         }
       }));
 
