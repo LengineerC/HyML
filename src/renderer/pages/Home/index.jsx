@@ -168,13 +168,18 @@ export default function Home() {
   }
 
   const handleVersionOpsClicked=()=>{
-    const {versionInfo:{versionId=null}}=currentMcOptions;
+    const {versionId=null}=currentMcOptions?.versionInfo || {};
 
     if(!versionId){
       messageApi.error("版本未安装，请点击开始游戏后安装");
     }else{
       console.log("to version options");
-      
+      navigate("/version-options",{
+        state:{
+          param:currentMcOptions,
+          type:SELECTED_LOCATION.INSTALLED
+        }
+      });
     }
   }
 

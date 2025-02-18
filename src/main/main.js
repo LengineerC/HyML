@@ -38,8 +38,9 @@ const createWindow = () => {
   if(process.env.NODE_ENV === 'development'){
     win.loadURL("http://localhost:8000/#/");
     win.webContents.openDevTools();
+    
   }else{
-    win.webContents.openDevTools();
+    // win.webContents.openDevTools();
 
     const indexPath=path.join(__dirname,"./dist/renderer/index.html");
     

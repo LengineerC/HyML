@@ -26,6 +26,12 @@ export default function VersionOptions() {
 
   useEffect(()=>{
     console.log(version,type);
+
+    if(type===SELECTED_LOCATION.DOWNLOAD){
+      setVersionName(version.versionString);
+    }else{
+      setVersionName(version.versionName);
+    }
     
   },[]);
 
@@ -75,7 +81,7 @@ export default function VersionOptions() {
 
       navigate("/");
 
-    }else{
+    }else if(type===SELECTED_LOCATION.INSTALLED){
 
     }
   }
@@ -94,7 +100,7 @@ export default function VersionOptions() {
         >
           <DownloadOutlined 
             className='save-icon'
-            />
+          />
         </div>
       </TextPopover>
 

@@ -61,10 +61,8 @@ export default function Settings() {
       
 
       if(code===STATUS_CODE.SUCCESS){
-        window.fileApi.getBaseConfig(value=>{
-          dispatch(saveBaseConfig(value));
-
-        });
+        const newBaseConfig=await window.fileApi.getBaseConfig();
+        dispatch(saveBaseConfig(newBaseConfig));
       }
     }
 

@@ -37,10 +37,8 @@ export default function Account() {
 
     await window.accountApi.logout(currentOnlineUser);
 
-    window.fileApi.getBaseConfig(value => {
-      dispatch(saveBaseConfig(value));
-
-    });
+    const newBaseConfig=await window.fileApi.getBaseConfig();
+    dispatch(saveBaseConfig(newBaseConfig));
 
     window.fileApi.getOnlineUsers(value => {
       // console.log("render App:",value);
@@ -57,12 +55,9 @@ export default function Account() {
       ...baseConfig,
       currentOnlineUser: null
     });
-    // console.log("handleSwitchAccount");
 
-    window.fileApi.getBaseConfig(value => {
-      dispatch(saveBaseConfig(value));
-
-    });
+    const newBaseConfig=await window.fileApi.getBaseConfig();
+    dispatch(saveBaseConfig(newBaseConfig));
   }
 
   const operationBtns = {
@@ -100,10 +95,8 @@ export default function Account() {
 
     window.accountApi.login(value => {
       if (value === STATUS_CODE.SUCCESS) {
-        window.fileApi.getBaseConfig(value => {
-          dispatch(saveBaseConfig(value));
-
-        });
+        window.fileApi.getBaseConfig()
+          .then(value=>dispatch(saveBaseConfig(value)));
 
         window.fileApi.getOnlineUsers(value => {
           dispatch(saveOnlineUsers(value));
@@ -148,10 +141,8 @@ export default function Account() {
       currentOnlineUser: value
     });
 
-    window.fileApi.getBaseConfig(value => {
-      dispatch(saveBaseConfig(value));
-
-    });
+    const newBaseConfig=await window.fileApi.getBaseConfig();
+    dispatch(saveBaseConfig(newBaseConfig));
 
     setCanLoginBtnClick(true);
   }
