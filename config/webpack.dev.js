@@ -13,7 +13,7 @@ module.exports = merge(baseConfig, {
   devServer: {
     static: path.resolve(__dirname, '../src/renderer'),
     hot: true,
-    port: 8000,
+    port: 3000,
     open: false,
     historyApiFallback: true,
   },
